@@ -1,0 +1,53 @@
+[
+  {
+    "problem_id": 1,
+    "tier": "easy",
+    "target_ip": "192.168.240.150",
+    "cidr_prefix": "/27",
+    "full_target": "192.168.240.150/27",
+    "subnet_mask": "255.255.255.224",
+    "wildcard_mask": "0.0.0.31",
+    "network_id": "192.168.240.128",
+    "broadcast_id": "192.168.240.159",
+    "first_usable_host": "192.168.240.129",
+    "last_usable_host": "192.168.240.158",
+    "usable_host_count": 30,
+    "total_addresses": 32,
+    "magic_number_block_size": 32,
+    "interesting_octet_index": 4
+  },
+  {
+    "problem_id": 2,
+    "tier": "easy",
+    "target_ip": "192.168.117.97",
+    "cidr_prefix": "/26",
+    "full_target": "192.168.117.97/26",
+    "subnet_mask": "255.255.255.192",
+    "wildcard_mask": "0.0.0.63",
+    "network_id": "192.168.117.64",
+    "broadcast_id": "192.168.117.127",
+    "first_usable_host": "192.168.117.65",
+    "last_usable_host": "192.168.117.126",
+    "usable_host_count": 62,
+    "total_addresses": 64,
+    "magic_number_block_size": 64,
+    "interesting_octet_index": 4
+  },
+  {
+    "problem_id": 3,
+    "tier": "easy",
+    "target_ip": "192.168.241.197",
+    "cidr_prefix": "/25",
+    "full_target": "192.168.241.197/25",
+    "subnet_mask": "255.255.255.128",
+    "wildcard_mask": "0.0.0.127",
+    "network_id": "192.168.241.128",
+    "broadcast_id": "192.168.241.255",
+    "first_usable_host": "192.168.241.129",
+    "last_usable_host": "192.168.241.254",
+    "usable_host_count": 126,
+    "total_addresses": 128,
+    "magic_number_block_size": 128,
+    "interesting_octet_index": 4
+  }
+]
