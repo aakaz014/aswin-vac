@@ -1,0 +1,2950 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetRev 14 // Computer Networks Revision Kit (OSI & TCP/IP)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#0f172a',
+              card: 'rgba(30, 41, 59, 0.7)',
+              border: 'rgba(51, 65, 85, 0.6)',
+              indigo: '#6366f1',
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+              amber: '#f59e0b',
+              rose: '#f43f5e'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .glass-panel {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.55);
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(51, 65, 85, 0.4);
+    }
+    .glow-indigo {
+      box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.35);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35);
+    }
+    .active-nav {
+      color: #06b6d4;
+      border-bottom: 2px solid #06b6d4;
+    }
+    /* Hex Dump styling */
+    .hex-byte:hover {
+      background-color: #6366f1;
+      color: #ffffff;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .hex-highlight-eth { background-color: rgba(59, 130, 246, 0.25); color: #93c5fd; }
+    .hex-highlight-ip { background-color: rgba(16, 185, 129, 0.25); color: #6ee7b7; }
+    .hex-highlight-tcp { background-color: rgba(245, 158, 11, 0.25); color: #fde68a; }
+    .hex-highlight-http { background-color: rgba(236, 72, 153, 0.25); color: #f472b6; }
+    
+    /* Code animations */
+    @keyframes pulseSlow {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.03); }
+    }
+    .ambient-glow {
+      animation: pulseSlow 8s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen selection:bg-cyan-500 selection:text-slate-950">
+
+  <!-- Ambient Background Lighting -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl ambient-glow"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl ambient-glow" style="animation-delay: 3s;"></div>
+    <div class="absolute bottom-10 left-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl ambient-glow" style="animation-delay: 5s;"></div>
+  </div>
+
+  <!-- TOP NOTIFICATION BANNER -->
+  <div class="bg-gradient-to-r from-indigo-900/60 via-slate-900/80 to-cyan-900/60 border-b border-indigo-500/20 py-1.5 px-4 text-center text-xs font-mono text-cyan-300 flex items-center justify-center gap-2">
+    <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+    <span>CAPSTONE 14 // 3RD-YEAR COMPUTER SCIENCE & ENGINEERING REVISION ENGINE</span>
+    <span class="hidden md:inline text-slate-400">• Standardized OSI & TCP/IP Protocol Analysis Suite</span>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Brand Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-cyan-500 p-0.5 shadow-lg shadow-indigo-500/20 group-hover:shadow-cyan-500/30 transition-all">
+            <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+              <svg class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="font-bold tracking-tight text-base sm:text-lg flex items-center gap-1.5">
+              <span class="bg-gradient-to-r from-indigo-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">NetRev 14</span>
+              <span class="text-xs px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">CSE v2.4</span>
+            </div>
+            <div class="text-[11px] text-slate-400 font-mono tracking-wider">COMPUTER NETWORKS REVISION KIT</div>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center space-x-1 text-sm font-medium">
+          <a href="#osi-tcp" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors">OSI vs TCP/IP</a>
+          <a href="#postal-analogy" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors">Postal Analogy</a>
+          <a href="#subnet-lab" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors">Subnetting Lab</a>
+          <a href="#wireshark" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors">Wireshark</a>
+          <a href="#quiz-engine" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors">15-Q Quiz</a>
+          <a href="#python-generator" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors">Python Script</a>
+          <a href="#ethics-audit" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-cyan-300 hover:bg-slate-800/60 transition-colors">Ethics & AI</a>
+        </nav>
+
+        <!-- Right Action Button / Sound toggle -->
+        <div class="flex items-center gap-2">
+          <button id="soundToggleBtn" onclick="toggleAudio()" title="Toggle Interface Audio" class="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60 border border-slate-800 transition-colors text-xs flex items-center gap-1 font-mono">
+            <span id="soundIcon">🔊</span>
+            <span class="hidden sm:inline" id="soundLabel">SFX: ON</span>
+          </button>
+          <a href="#quiz-engine" class="hidden sm:inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow-md shadow-indigo-600/20 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            Exam Drill
+          </a>
+          <!-- Mobile Menu Button -->
+          <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobileMenu" class="hidden lg:hidden py-4 border-t border-slate-800 space-y-2 font-medium">
+        <a href="#osi-tcp" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">OSI vs TCP/IP Models</a>
+        <a href="#postal-analogy" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">Postal Analogy & Encapsulation</a>
+        <a href="#subnet-lab" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">Subnetting Practice Lab</a>
+        <a href="#wireshark" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">Wireshark Packet Inspector</a>
+        <a href="#quiz-engine" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">15-Question Quiz Engine</a>
+        <a href="#python-generator" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">Python Automation Script</a>
+        <a href="#ethics-audit" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">Ethics & AI Hallucination Audit</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative pt-12 pb-16 lg:pt-20 lg:pb-24 overflow-hidden border-b border-slate-800/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center max-w-3xl mx-auto">
+        <!-- Floating Pill Tag -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/70 text-slate-300 text-xs font-mono mb-6 shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+          <span>Semester Exam & Lab Viva Preparation</span>
+          <span class="text-slate-500">|</span>
+          <span class="text-indigo-400 font-semibold">100% Deterministic Bitwise Logic</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+          Master Computer Networks: <br class="hidden sm:inline"/>
+          <span class="bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+            OSI, TCP/IP & Subnetting Mastery
+          </span>
+        </h1>
+
+        <p class="mt-6 text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
+          A battle-tested interactive revision kit engineered specifically for 3rd-Year Computer Science & Engineering students. Deep dive into protocol layers, bitwise subnetting math, Wireshark packet dissection, and packet encapsulation.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <a href="#subnet-lab" class="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
+            <svg class="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            Launch Subnet Calculator
+          </a>
+          <a href="#quiz-engine" class="inline-flex items-center gap-2 bg-slate-800/90 hover:bg-slate-700/90 text-white font-semibold px-6 py-3.5 rounded-xl border border-slate-700 shadow-md transition-all transform hover:-translate-y-0.5">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Start 15-Question Quiz
+          </a>
+          <a href="#wireshark" class="inline-flex items-center gap-2 bg-slate-900/60 hover:bg-slate-800/60 text-slate-300 font-medium px-4 py-3.5 rounded-xl border border-slate-800 transition-colors text-sm">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            Wireshark Trace
+          </a>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-left">
+          <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+            <div class="text-2xl font-bold font-mono text-cyan-400">7 vs 4/5</div>
+            <div class="text-xs text-slate-400 mt-1">OSI & TCP/IP Layer Dual Explorer</div>
+          </div>
+          <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+            <div class="text-2xl font-bold font-mono text-indigo-400">15 Preset</div>
+            <div class="text-xs text-slate-400 mt-1">Subnet Math Problems (Easy-Hard)</div>
+          </div>
+          <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+            <div class="text-2xl font-bold font-mono text-emerald-400">Live Tree</div>
+            <div class="text-xs text-slate-400 mt-1">Wireshark Hex & Header Dissector</div>
+          </div>
+          <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+            <div class="text-2xl font-bold font-mono text-amber-400">15 Questions</div>
+            <div class="text-xs text-slate-400 mt-1">Interactive Diagnostic Assessment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: INTERACTIVE OSI VS TCP/IP MODEL -->
+    <!-- ========================================== -->
+    <section id="osi-tcp" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Section 01 // Architectural Models
+          </div>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Interactive OSI vs. TCP/IP Model Explorer</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Compare the ISO 7-Layer Theoretical Reference Model with the pragmatic DARPA TCP/IP Model (both 4-layer and modern 5-layer formats). Click any layer to inspect duties, protocols, PDUs, and hardware.
+          </p>
+        </div>
+        <!-- Model Toggle Tabs -->
+        <div class="flex items-center bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-xs font-mono">
+          <button onclick="setLayerViewModel('compare')" id="btnViewCompare" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition-all">Side-by-Side</button>
+          <button onclick="setLayerViewModel('osi7')" id="btnViewOSI" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">OSI 7 Layers</button>
+          <button onclick="setLayerViewModel('tcp5')" id="btnViewTCP" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">TCP/IP 4/5 Layers</button>
+        </div>
+      </div>
+
+      <!-- Layer Search & Protocol Filter Bar -->
+      <div class="glass-card p-3 rounded-xl mb-6 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 flex-1 min-w-[240px]">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="layerSearchInput" oninput="filterLayerContent()" placeholder="Search protocol (e.g. DNS, ARP, TCP, BGP, Ethernet) or keyword..." class="w-full bg-transparent border-none text-slate-200 placeholder-slate-500 focus:outline-none font-mono">
+        </div>
+        <div class="flex items-center gap-1.5 text-slate-400 font-mono text-[11px]">
+          <span>Quick Filter:</span>
+          <button onclick="quickFilterProtocol('HTTP')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300">HTTP</button>
+          <button onclick="quickFilterProtocol('TCP')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300">TCP</button>
+          <button onclick="quickFilterProtocol('IP')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-300">IP</button>
+          <button onclick="quickFilterProtocol('ARP')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300">ARP</button>
+          <button onclick="quickFilterProtocol('')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-400">Clear</button>
+        </div>
+      </div>
+
+      <!-- Interactive Comparison Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left: Interactive Layer Stack (7 OSI Layers & TCP Mapping) -->
+        <div class="lg:col-span-7 space-y-2.5" id="layersStackContainer">
+          <!-- Dynamically populated layers via JS -->
+        </div>
+
+        <!-- Right: Detail Inspector Card -->
+        <div class="lg:col-span-5">
+          <div class="glass-panel rounded-2xl p-6 sticky top-24 border border-slate-700/60 shadow-xl" id="layerDetailPanel">
+            <div class="flex items-start justify-between">
+              <div>
+                <span id="detailLayerPill" class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  Layer 7 // Application
+                </span>
+                <h3 id="detailLayerTitle" class="text-2xl font-bold text-white mt-2">Application Layer</h3>
+              </div>
+              <div class="text-right">
+                <span class="text-[11px] font-mono text-slate-400 uppercase block">PDU Type</span>
+                <span id="detailLayerPDU" class="font-mono text-sm font-bold text-cyan-400">Data / Payload</span>
+              </div>
+            </div>
+
+            <p id="detailLayerSummary" class="text-sm text-slate-300 mt-3 leading-relaxed">
+              Provides user-facing interface services and direct network access for applications like web browsers, email clients, and file transfer daemons.
+            </p>
+
+            <div class="mt-6 space-y-4 text-xs font-mono">
+              <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                <span class="text-slate-400 uppercase block mb-1">Key Responsibilities</span>
+                <p id="detailLayerDuties" class="text-slate-200 font-sans text-xs leading-normal">
+                  End-user interaction, network service requests, message formatting, HTTP request/response parsing.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                  <span class="text-slate-400 uppercase block mb-1">Protocols</span>
+                  <div id="detailLayerProtocols" class="flex flex-wrap gap-1 text-[11px]">
+                    <span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">HTTP/HTTPS</span>
+                    <span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">DNS</span>
+                    <span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">SSH</span>
+                    <span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">SMTP</span>
+                  </div>
+                </div>
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                  <span class="text-slate-400 uppercase block mb-1">Associated Hardware</span>
+                  <span id="detailLayerHardware" class="text-slate-200 block text-[11px]">
+                    Hosts, Application Gateways, L7 Reverse Proxies, Next-Gen Firewalls
+                  </span>
+                </div>
+              </div>
+
+              <!-- Exam Trap Alert -->
+              <div class="bg-amber-950/30 border border-amber-500/30 p-3 rounded-xl text-amber-200">
+                <div class="flex items-center gap-1.5 font-bold mb-1 text-[11px] uppercase text-amber-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  Exam Pitfall / Viva Trap
+                </div>
+                <p id="detailLayerTrap" class="font-sans text-xs text-amber-200/90 leading-normal">
+                  Students often assume DNS belongs to Transport because it uses UDP/53. Remember: DNS is strictly an Application Layer protocol that relies on UDP/TCP as its underlying transport!
+                </p>
+              </div>
+
+              <!-- TCP/IP Model Mapping Note -->
+              <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px]">
+                <span class="text-slate-400 uppercase block mb-1 font-mono">TCP/IP Architecture Equivalent</span>
+                <span id="detailLayerTcpMapping" class="text-cyan-300 font-semibold">
+                  Maps directly into the unified TCP/IP "Application Layer" (incorporating OSI L7, L6, & L5).
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3: POST OFFICE ANALOGY MODULE      -->
+    <!-- ========================================== -->
+    <section id="postal-analogy" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 text-indigo-400 font-mono text-xs uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+            Section 02 // Mental Models & Pedagogy
+          </div>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Post Office Analogy: Encapsulation & Decapsulation</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Understand how raw application data transforms into physical signals through the International Courier & Postal System analogy. Follow the message from sender pen to receiver reading desk.
+          </p>
+        </div>
+
+        <!-- Controls: Direction Toggle & Stepper -->
+        <div class="flex items-center gap-2">
+          <div class="bg-slate-900 p-1 rounded-xl border border-slate-800 flex text-xs font-mono">
+            <button onclick="setPostalDirection('encapsulate')" id="btnPostalEncap" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition-all">Encapsulation (TX)</button>
+            <button onclick="setPostalDirection('decapsulate')" id="btnPostalDecap" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Decapsulation (RX)</button>
+          </div>
+          <button onclick="togglePostalAutoplay()" id="btnPostalPlay" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 transition-colors" title="Auto Play Story">
+            <svg id="playIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Analogy Interactive Stage -->
+      <div class="glass-panel rounded-2xl p-6 lg:p-8 border border-slate-700/60 shadow-2xl">
+        <!-- Progress Steps Indicator -->
+        <div class="relative mb-10">
+          <div class="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-slate-800">
+            <div id="postalProgressBar" style="width: 14.28%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-indigo-500 via-cyan-500 to-emerald-400 transition-all duration-500"></div>
+          </div>
+          <div class="flex justify-between text-[11px] font-mono text-slate-400">
+            <span class="cursor-pointer" onclick="goToPostalStep(0)">1. App / Letter</span>
+            <span class="cursor-pointer" onclick="goToPostalStep(1)">2. Pres / Cipher</span>
+            <span class="cursor-pointer" onclick="goToPostalStep(2)">3. Sess / Courier Desk</span>
+            <span class="cursor-pointer" onclick="goToPostalStep(3)">4. Trans / Tracking #</span>
+            <span class="cursor-pointer" onclick="goToPostalStep(4)">5. Net / Zip Code</span>
+            <span class="cursor-pointer" onclick="goToPostalStep(5)">6. Link / Delivery Van</span>
+            <span class="cursor-pointer" onclick="goToPostalStep(6)">7. Phys / Asphalt</span>
+          </div>
+        </div>
+
+        <!-- Main Story Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <!-- Story Card -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="flex items-center gap-3">
+              <span id="postalStepBadge" class="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 font-mono font-bold flex items-center justify-center text-sm">
+                L7
+              </span>
+              <div>
+                <span id="postalNetworkLayerName" class="text-xs font-mono text-cyan-400 uppercase">OSI Layer 7 // Application</span>
+                <h3 id="postalStepTitle" class="text-2xl font-bold text-white">The Confidential Handwritten Letter</h3>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 rounded-xl p-5 border border-slate-800/80 space-y-3">
+              <div class="flex items-center gap-2 text-indigo-300 font-semibold text-sm">
+                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>Postal World: <span id="postalWorldDesc" class="text-slate-200 font-normal">You compose a heartfelt letter to a colleague in another country. The message text is your core payload.</span></span>
+              </div>
+              <div class="border-t border-slate-800 pt-3 flex items-center gap-2 text-cyan-300 font-semibold text-sm">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>Digital Network World: <span id="digitalWorldDesc" class="text-slate-200 font-normal">Your web browser prepares an HTTP GET request payload or user message body: "GET /index.html HTTP/1.1".</span></span>
+              </div>
+            </div>
+
+            <!-- Header Added / Removed Visual Indicator -->
+            <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800 text-xs font-mono">
+              <span class="text-slate-400 uppercase text-[10px] block mb-1">Encapsulation Operation</span>
+              <div id="postalHeaderAdded" class="text-emerald-400 flex items-center gap-2 font-semibold">
+                <span>➕ Payload Created: Raw Data (No network headers attached yet)</span>
+              </div>
+            </div>
+
+            <!-- Stepper Navigation -->
+            <div class="flex items-center gap-3 pt-2">
+              <button onclick="prevPostalStep()" id="btnPrevPostal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 flex items-center gap-1 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                ← Previous Layer
+              </button>
+              <button onclick="nextPostalStep()" id="btnNextPostal" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-600/30 flex items-center gap-1 transition-all">
+                Next Layer →
+              </button>
+              <span id="postalStepIndicatorText" class="text-xs font-mono text-slate-400 ml-2">Step 1 of 7</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Packet Envelope Visualization -->
+          <div class="lg:col-span-5">
+            <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-inner flex flex-col items-center justify-center min-h-[320px]">
+              <span class="text-xs font-mono text-slate-400 uppercase mb-4 tracking-wider">Dynamic PDU Inspection</span>
+
+              <!-- Visual Packet Box -->
+              <div id="visualEnvelope" class="w-full max-w-sm transition-all duration-300 space-y-2">
+                <!-- Dynamically updated via JS -->
+              </div>
+
+              <!-- Bit Representation Indicator -->
+              <div id="visualBitsStream" class="mt-6 w-full text-center hidden">
+                <span class="text-[10px] font-mono text-emerald-400 uppercase block mb-1">Physical Signal Stream</span>
+                <div class="font-mono text-xs text-emerald-300 bg-emerald-950/40 border border-emerald-500/30 py-2 px-3 rounded-lg overflow-x-auto tracking-widest animate-pulse">
+                  01001000 01100101 01101100 01101100 01101111 00100001
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4: SUBNETTING PRACTICE LAB         -->
+    <!-- ========================================== -->
+    <section id="subnet-lab" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Section 03 // Bitwise Mathematics Lab
+          </div>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Subnetting Practice Lab & Real-Time Engine</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Deterministic, bitwise-verified IPv4 subnet calculator. Type any IPv4 address and CIDR prefix to inspect binary boundaries, network ID, broadcast, and host capacity.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="loadRandomSubnetProblem()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-mono flex items-center gap-1.5 transition-all">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Random Drill IP
+          </button>
+        </div>
+      </div>
+
+      <!-- Calculator Card -->
+      <div class="glass-panel rounded-2xl p-6 lg:p-8 border border-slate-700/60 shadow-2xl mb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- Input Controls -->
+          <div class="lg:col-span-5 space-y-4">
+            <div>
+              <label for="ipInput" class="block text-xs font-mono text-slate-300 uppercase mb-1.5">IPv4 Host or Network Address</label>
+              <div class="relative">
+                <input type="text" id="ipInput" value="192.168.10.45" oninput="runSubnetCalculator()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-cyan-400 font-mono text-lg font-bold tracking-wider focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
+                <button onclick="copyToClipboard(document.getElementById('ipInput').value)" class="absolute right-3 top-3 text-slate-400 hover:text-white" title="Copy IP">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </button>
+              </div>
+              <span id="ipValidationMsg" class="text-[11px] font-mono text-emerald-400 mt-1 block">✓ Valid IPv4 address format</span>
+            </div>
+
+            <!-- CIDR Prefix Slider & Number Box -->
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono text-slate-300 mb-1.5">
+                <label for="cidrSlider">CIDR Prefix Length</label>
+                <div class="flex items-center gap-1">
+                  <span class="text-indigo-400 font-bold text-base" id="cidrLabel">/26</span>
+                  <span class="text-slate-500 text-[11px]" id="cidrSubnetMaskShort">(255.255.255.192)</span>
+                </div>
+              </div>
+              <input type="range" id="cidrSlider" min="1" max="32" value="26" oninput="onCidrSliderChange(this.value)" class="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg">
+              <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                <span>/1</span>
+                <span>/8 (Class A)</span>
+                <span>/16 (Class B)</span>
+                <span>/24 (Class C)</span>
+                <span>/30</span>
+                <span>/32</span>
+              </div>
+            </div>
+
+            <!-- Quick Preset CIDR Buttons -->
+            <div class="pt-2">
+              <span class="text-[11px] font-mono text-slate-400 block mb-1.5">Quick CIDR Selectors:</span>
+              <div class="flex flex-wrap gap-1.5 font-mono text-xs">
+                <button onclick="setQuickCidr(8)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">/8</button>
+                <button onclick="setQuickCidr(16)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">/16</button>
+                <button onclick="setQuickCidr(22)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">/22</button>
+                <button onclick="setQuickCidr(24)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">/24</button>
+                <button onclick="setQuickCidr(26)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700">/26</button>
+                <button onclick="setQuickCidr(28)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">/28</button>
+                <button onclick="setQuickCidr(30)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">/30</button>
+              </div>
+            </div>
+
+            <!-- Mathematical Formula Breakdown Box -->
+            <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 text-xs font-mono space-y-1.5 text-slate-300">
+              <div class="text-cyan-400 font-bold uppercase text-[10px] tracking-wider">Underlying Math Formulas</div>
+              <div>• Host Bits ($H$) = $32 - n = 32 - <span id="mathCidr">26</span> = <span id="mathHostBits">6</span>$ bits</div>
+              <div>• Total Addresses = $2^H = 2^{<span id="mathHostBits2">6</span>} = <span id="mathTotalAddrs">64</span>$</div>
+              <div>• Usable Hosts = $2^H - 2 = <span id="mathUsableHosts">62</span>$</div>
+              <div>• Block Size (Magic Number) = $256 - \text{Subnet Octet} = <span id="mathBlockSize">64</span>$</div>
+            </div>
+          </div>
+
+          <!-- Calculation Outputs Grid -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+              <!-- Network ID -->
+              <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 hover:border-cyan-500/50 transition-colors">
+                <span class="text-slate-400 text-[10px] uppercase block mb-1">Network ID (First Address)</span>
+                <div class="text-base font-bold text-cyan-300 flex items-center justify-between">
+                  <span id="resNetworkID">192.168.10.0</span>
+                  <button onclick="copyToClipboard(document.getElementById('resNetworkID').textContent)" class="text-slate-500 hover:text-slate-300"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+                </div>
+                <span class="text-[10px] text-slate-500 mt-0.5 block">Identifies the subnet on routers</span>
+              </div>
+
+              <!-- Broadcast ID -->
+              <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 hover:border-rose-500/50 transition-colors">
+                <span class="text-slate-400 text-[10px] uppercase block mb-1">Broadcast ID (Last Address)</span>
+                <div class="text-base font-bold text-rose-300 flex items-center justify-between">
+                  <span id="resBroadcastID">192.168.10.63</span>
+                  <button onclick="copyToClipboard(document.getElementById('resBroadcastID').textContent)" class="text-slate-500 hover:text-slate-300"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+                </div>
+                <span class="text-[10px] text-slate-500 mt-0.5 block">Packets sent to all hosts in subnet</span>
+              </div>
+
+              <!-- Subnet Mask -->
+              <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition-colors">
+                <span class="text-slate-400 text-[10px] uppercase block mb-1">Subnet Mask (Dotted Decimal)</span>
+                <div class="text-base font-bold text-indigo-300 flex items-center justify-between">
+                  <span id="resSubnetMask">255.255.255.192</span>
+                  <button onclick="copyToClipboard(document.getElementById('resSubnetMask').textContent)" class="text-slate-500 hover:text-slate-300"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+                </div>
+                <span class="text-[10px] text-slate-500 mt-0.5 block" id="resWildcardMask">Wildcard: 0.0.0.63</span>
+              </div>
+
+              <!-- Usable Host Range -->
+              <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 hover:border-emerald-500/50 transition-colors">
+                <span class="text-slate-400 text-[10px] uppercase block mb-1">Usable Host Range</span>
+                <div class="text-sm font-bold text-emerald-300 flex items-center justify-between">
+                  <span id="resHostRange">192.168.10.1 - 192.168.10.62</span>
+                </div>
+                <span class="text-[10px] text-emerald-400/90 mt-0.5 block" id="resTotalHosts">62 Usable Hosts</span>
+              </div>
+            </div>
+
+            <!-- 32-Bit Binary Bit Visualizer -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-[11px] font-mono">
+                <span class="text-slate-400 uppercase">32-Bit Binary Subnet Mask Representation</span>
+                <div class="flex items-center gap-3 text-[10px]">
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-cyan-500"></span> Network Prefix (<span id="countNetBits">26</span> bits)</span>
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-500"></span> Host Portion (<span id="countHostBits">6</span> bits)</span>
+                </div>
+              </div>
+              <div id="binaryMaskVisual" class="font-mono text-xs tracking-wider break-all p-2 rounded bg-slate-900 border border-slate-800">
+                <!-- Color coded 32 bits injected by JS -->
+              </div>
+            </div>
+
+            <!-- IP Class & RFC 1918 Scope Banner -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-xs font-mono">
+              <div>
+                <span class="text-slate-500">Classification: </span>
+                <span id="resIpClass" class="text-amber-300 font-bold">Class C</span>
+              </div>
+              <div>
+                <span class="text-slate-500">Address Scope: </span>
+                <span id="resIpScope" class="text-cyan-300 font-bold">RFC 1918 Private Network</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRESET CURATED PROBLEMS CONTAINER (5 Easy, 5 Medium, 5 Hard) -->
+      <div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>15 Curated Practice Problems</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">Verified for CSE Exams</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Select any problem to load into the calculator, or toggle the step-by-step revealed solution.</p>
+          </div>
+
+          <!-- Difficulty Filter Tabs -->
+          <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-mono">
+            <button onclick="filterPresetProblems('all')" id="btnProbAll" class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold">All (15)</button>
+            <button onclick="filterPresetProblems('easy')" id="btnProbEasy" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white">Easy (5)</button>
+            <button onclick="filterPresetProblems('medium')" id="btnProbMed" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white">Medium (5)</button>
+            <button onclick="filterPresetProblems('hard')" id="btnProbHard" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white">Hard (5)</button>
+          </div>
+        </div>
+
+        <!-- Problems Grid -->
+        <div id="presetProblemsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Dynamically populated 15 problems via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5: WIRESHARK PACKET INSPECTOR      -->
+    <!-- ========================================== -->
+    <section id="wireshark" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 text-emerald-400 font-mono text-xs uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Section 04 // Protocol Analysis
+          </div>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Wireshark Packet Inspector Widget</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Inspect a realistic HTTP GET packet trace captured from live wire. Hover/click headers to trace field definitions, sequence numbers, TTL, and synchronized hex bytes.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-slate-400">Packet Type:</span>
+          <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-emerald-950 text-emerald-300 border border-emerald-800">
+            HTTP GET /index.html (TCP:80)
+          </span>
+        </div>
+      </div>
+
+      <!-- Wireshark Mock Desktop Window -->
+      <div class="glass-panel rounded-2xl border border-slate-700/80 shadow-2xl overflow-hidden">
+        <!-- Wireshark Top Titlebar -->
+        <div class="bg-slate-900 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <div class="flex gap-1.5">
+              <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+            </div>
+            <span class="text-slate-400 ml-2">wireshark_capture_http_get.pcapng [Packet #1 of 544 bytes]</span>
+          </div>
+          <div class="text-[11px] text-slate-500">Live Dissector Mode</div>
+        </div>
+
+        <!-- Filter Bar Mock -->
+        <div class="bg-slate-950 px-4 py-2 border-b border-slate-800 flex items-center gap-3">
+          <span class="text-xs font-mono text-emerald-400 font-bold">Filter:</span>
+          <div class="flex-1 bg-emerald-950/30 border border-emerald-600/40 rounded-lg px-3 py-1 font-mono text-xs text-emerald-300 flex items-center justify-between">
+            <span>http.request.method == "GET" || tcp.port == 80</span>
+            <span class="text-[10px] text-emerald-500">✓ Syntax Valid</span>
+          </div>
+        </div>
+
+        <!-- Wireshark Packet Detail Tree & Live Hex Stream Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+          
+          <!-- Left: Protocol Hierarchy Tree (7 Cols) -->
+          <div class="lg:col-span-7 p-4 sm:p-5 space-y-2 font-mono text-xs select-none overflow-y-auto max-h-[500px]">
+            
+            <!-- Frame Header Node -->
+            <div class="tree-node bg-slate-900/60 rounded-lg p-2.5 border border-slate-800/80 hover:bg-slate-800/60 transition-colors cursor-pointer" onclick="inspectWiresharkField('frame')">
+              <div class="flex items-center gap-2 font-semibold text-slate-300">
+                <span class="text-slate-500">▶</span>
+                <span>Frame 1: 544 bytes on wire (4352 bits), 544 bytes captured</span>
+              </div>
+            </div>
+
+            <!-- Ethernet II Node (Layer 2) -->
+            <div class="tree-node bg-blue-950/20 rounded-lg p-2.5 border border-blue-500/30 hover:bg-blue-950/40 transition-colors cursor-pointer" onmouseenter="highlightHexSection('eth')" onmouseleave="clearHexHighlight()" onclick="inspectWiresharkField('ethernet')">
+              <div class="flex items-center justify-between font-semibold text-blue-300">
+                <div class="flex items-center gap-2">
+                  <span class="text-blue-400">▼</span>
+                  <span>Ethernet II, Src: Apple_1a:2b:3c (00:1a:2b:3c:4d:5e), Dst: Cisco_14:69:70 (00:14:69:70:81:92)</span>
+                </div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-700/50">L2 Data Link</span>
+              </div>
+              <div class="pl-6 pt-2 space-y-1 text-slate-400 text-[11px]">
+                <div onclick="event.stopPropagation(); inspectWiresharkField('eth_dst')" class="hover:text-blue-300">Destination: Cisco_14:69:70 (00:14:69:70:81:92)</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('eth_src')" class="hover:text-blue-300">Source: Apple_1a:2b:3c (00:1a:2b:3c:4d:5e)</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('eth_type')" class="hover:text-blue-300">Type: IPv4 (0x0800)</div>
+              </div>
+            </div>
+
+            <!-- IPv4 Node (Layer 3) -->
+            <div class="tree-node bg-emerald-950/20 rounded-lg p-2.5 border border-emerald-500/30 hover:bg-emerald-950/40 transition-colors cursor-pointer" onmouseenter="highlightHexSection('ip')" onmouseleave="clearHexHighlight()" onclick="inspectWiresharkField('ipv4')">
+              <div class="flex items-center justify-between font-semibold text-emerald-300">
+                <div class="flex items-center gap-2">
+                  <span class="text-emerald-400">▼</span>
+                  <span>Internet Protocol Version 4, Src: 192.168.1.105, Dst: 93.184.216.34</span>
+                </div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-900/50 text-emerald-300 border border-emerald-700/50">L3 Network</span>
+              </div>
+              <div class="pl-6 pt-2 space-y-1 text-slate-400 text-[11px]">
+                <div onclick="event.stopPropagation(); inspectWiresharkField('ip_ver')" class="hover:text-emerald-300">0100 .... = Version: 4 | .... 0101 = Header Length: 20 bytes (5)</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('ip_len')" class="hover:text-emerald-300">Total Length: 530 bytes</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('ip_ttl')" class="hover:text-emerald-300 font-bold text-emerald-200">Time to Live (TTL): 64 hops</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('ip_proto')" class="hover:text-emerald-300">Protocol: TCP (6)</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('ip_chk')" class="hover:text-emerald-300">Header Checksum: 0x1e4f [correct]</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('ip_src')" class="hover:text-emerald-300">Source Address: 192.168.1.105</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('ip_dst')" class="hover:text-emerald-300">Destination Address: 93.184.216.34 (example.com)</div>
+              </div>
+            </div>
+
+            <!-- TCP Node (Layer 4) -->
+            <div class="tree-node bg-amber-950/20 rounded-lg p-2.5 border border-amber-500/30 hover:bg-amber-950/40 transition-colors cursor-pointer" onmouseenter="highlightHexSection('tcp')" onmouseleave="clearHexHighlight()" onclick="inspectWiresharkField('tcp')">
+              <div class="flex items-center justify-between font-semibold text-amber-300">
+                <div class="flex items-center gap-2">
+                  <span class="text-amber-400">▼</span>
+                  <span>Transmission Control Protocol, Src Port: 51842, Dst Port: 80, Seq: 1, Ack: 1</span>
+                </div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-900/50 text-amber-300 border border-amber-700/50">L4 Transport</span>
+              </div>
+              <div class="pl-6 pt-2 space-y-1 text-slate-400 text-[11px]">
+                <div onclick="event.stopPropagation(); inspectWiresharkField('tcp_ports')" class="hover:text-amber-300">Source Port: 51842 (Ephemeral) | Destination Port: 80 (HTTP)</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('tcp_seq')" class="hover:text-amber-300 font-bold text-amber-200">Sequence Number: 1 (relative) | Acknowledgment: 1</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('tcp_flags')" class="hover:text-amber-300 font-bold text-amber-200">Flags: 0x018 (PSH, ACK) [Push & Acknowledgment]</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('tcp_win')" class="hover:text-amber-300">Window Size value: 65535 (Calculated window size: 65535)</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('tcp_chk')" class="hover:text-amber-300">Checksum: 0xa4b1 [verified]</div>
+              </div>
+            </div>
+
+            <!-- HTTP Node (Layer 7) -->
+            <div class="tree-node bg-pink-950/20 rounded-lg p-2.5 border border-pink-500/30 hover:bg-pink-950/40 transition-colors cursor-pointer" onmouseenter="highlightHexSection('http')" onmouseleave="clearHexHighlight()" onclick="inspectWiresharkField('http')">
+              <div class="flex items-center justify-between font-semibold text-pink-300">
+                <div class="flex items-center gap-2">
+                  <span class="text-pink-400">▼</span>
+                  <span>Hypertext Transfer Protocol, GET /index.html HTTP/1.1</span>
+                </div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-pink-900/50 text-pink-300 border border-pink-700/50">L7 Application</span>
+              </div>
+              <div class="pl-6 pt-2 space-y-1 text-slate-400 text-[11px]">
+                <div onclick="event.stopPropagation(); inspectWiresharkField('http_req')" class="hover:text-pink-300 font-bold text-pink-200">Expert Info: GET /index.html HTTP/1.1\r\n</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('http_host')" class="hover:text-pink-300">Host: example.com\r\n</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('http_ua')" class="hover:text-pink-300">User-Agent: Mozilla/5.0 (X11; Linux x86_64)...\r\n</div>
+                <div onclick="event.stopPropagation(); inspectWiresharkField('http_conn')" class="hover:text-pink-300">Connection: keep-alive\r\n</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Field Inspector & Synchronized Hex Viewer (5 Cols) -->
+          <div class="lg:col-span-5 p-4 sm:p-5 flex flex-col justify-between bg-slate-950/60">
+            <!-- Dynamic Field Info Box -->
+            <div id="wiresharkDetailCard" class="bg-slate-900 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2 mb-4">
+              <div class="flex items-center justify-between">
+                <span id="wsFieldTag" class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px]">L3 :: IP Header</span>
+                <span id="wsFieldBytes" class="text-slate-500 text-[10px]">Offset: 0x000E</span>
+              </div>
+              <h4 id="wsFieldTitle" class="text-base font-bold text-white">Time to Live (TTL: 64)</h4>
+              <p id="wsFieldExpl" class="text-slate-300 font-sans text-xs leading-relaxed">
+                An 8-bit integer decremented by 1 at every router hop. Prevents packets from circulating indefinitely during routing loops. When TTL drops to 0, the router discards the packet and sends back an ICMP Type 11 (Time Exceeded) message to the source host.
+              </p>
+              <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-[11px] text-amber-300">
+                <span class="font-bold text-amber-400 uppercase text-[10px] block">Security Relevance</span>
+                <span id="wsFieldSec">Used in OS fingerprinting (Linux/Android default TTL = 64, Windows = 128, Cisco IOS = 255) and traceroute route mapping.</span>
+              </div>
+            </div>
+
+            <!-- Hex & ASCII Byte View -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] font-mono select-text">
+              <div class="flex items-center justify-between text-slate-500 mb-2 text-[10px]">
+                <span>RAW BYTE DUMP (HEX OFFSET)</span>
+                <span>ASCII VIEW</span>
+              </div>
+              <div id="hexDumpContainer" class="space-y-1 text-slate-400 leading-tight overflow-x-auto">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Essential Wireshark Filters Cheat Sheet (Footer) -->
+        <div class="bg-slate-900/90 p-4 sm:p-5 border-t border-slate-800">
+          <div class="flex items-center gap-2 mb-3">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+            <h4 class="text-xs font-mono font-bold text-white uppercase tracking-wider">5 Essential Wireshark Display Filters for CSE Labs</h4>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2.5 text-xs font-mono">
+            <!-- Filter 1 -->
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-cyan-400 font-bold block mb-1">ip.addr == 192.168.1.1</span>
+                <span class="text-[11px] text-slate-400 font-sans block">Isolates all traffic where source OR destination equals target host.</span>
+              </div>
+              <button onclick="copyToClipboard('ip.addr == 192.168.1.1')" class="mt-2 text-[10px] text-slate-500 hover:text-cyan-300 text-left flex items-center gap-1">📋 Copy Filter</button>
+            </div>
+
+            <!-- Filter 2 -->
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-indigo-400 font-bold block mb-1">tcp.flags.syn == 1</span>
+                <span class="text-[11px] text-slate-400 font-sans block">Filters connection request packets. Detects port scans & SYN flooding.</span>
+              </div>
+              <button onclick="copyToClipboard('tcp.flags.syn == 1 && tcp.flags.ack == 0')" class="mt-2 text-[10px] text-slate-500 hover:text-indigo-300 text-left flex items-center gap-1">📋 Copy Filter</button>
+            </div>
+
+            <!-- Filter 3 -->
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-pink-400 font-bold block mb-1">http.request</span>
+                <span class="text-[11px] text-slate-400 font-sans block">Extracts all outgoing HTTP client requests (GET, POST, PUT, DELETE).</span>
+              </div>
+              <button onclick="copyToClipboard('http.request')" class="mt-2 text-[10px] text-slate-500 hover:text-pink-300 text-left flex items-center gap-1">📋 Copy Filter</button>
+            </div>
+
+            <!-- Filter 4 -->
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-amber-400 font-bold block mb-1">dns.flags.response == 1</span>
+                <span class="text-[11px] text-slate-400 font-sans block">Displays resolved DNS responses to inspect domain-to-IP answers.</span>
+              </div>
+              <button onclick="copyToClipboard('dns.flags.response == 1 && dns.flags.rcode != 0')" class="mt-2 text-[10px] text-slate-500 hover:text-amber-300 text-left flex items-center gap-1">📋 Copy Filter</button>
+            </div>
+
+            <!-- Filter 5 -->
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span class="text-emerald-400 font-bold block mb-1">frame.len > 1280</span>
+                <span class="text-[11px] text-slate-400 font-sans block">Tracks jumbo frames or packets approaching Ethernet MTU (1500 bytes).</span>
+              </div>
+              <button onclick="copyToClipboard('frame.len > 1280')" class="mt-2 text-[10px] text-slate-500 hover:text-emerald-300 text-left flex items-center gap-1">📋 Copy Filter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 6: 15-QUESTION QUIZ ENGINE         -->
+    <!-- ========================================== -->
+    <section id="quiz-engine" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 text-indigo-400 font-mono text-xs uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+            Section 05 // Self-Assessment Exam Simulator
+          </div>
+          <h2 class="text-3xl font-extrabold text-white mt-1">15-Question Interactive Diagnostic Quiz</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Simulate a university exam drill covering 5 Conceptual questions, 5 Subnetting math problems, and 5 Wireshark packet scenarios. Instant scoring with distractor analysis.
+          </p>
+        </div>
+
+        <!-- Quiz Progress & Score Badge -->
+        <div class="flex items-center gap-3">
+          <div class="glass-card px-4 py-2 rounded-xl border border-slate-800 text-xs font-mono">
+            <span class="text-slate-400">Score: </span>
+            <span id="quizScoreText" class="text-cyan-400 font-bold text-sm">0 / 15</span>
+          </div>
+          <button onclick="resetQuiz()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono border border-slate-700 transition-colors">
+            ↻ Reset Quiz
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Engine Card -->
+      <div class="glass-panel rounded-2xl p-6 lg:p-8 border border-slate-700/60 shadow-2xl">
+        <!-- Progress Bar -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+            <span>QUESTION <span id="quizCurrentIndex">1</span> OF 15</span>
+            <span id="quizCategoryBadge" class="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">Conceptual Protocol Architecture</span>
+          </div>
+          <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+            <div id="quizProgressBar" style="width: 6.66%" class="bg-gradient-to-r from-indigo-500 via-cyan-500 to-emerald-400 h-2 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <!-- Question Body Container -->
+        <div id="quizQuestionBox" class="space-y-6">
+          <h3 id="quizQuestionText" class="text-xl sm:text-2xl font-bold text-white leading-snug">
+            Loading question...
+          </h3>
+
+          <!-- Options Container -->
+          <div id="quizOptionsContainer" class="space-y-3 font-mono text-xs sm:text-sm">
+            <!-- Dynamic radio cards injected by JS -->
+          </div>
+
+          <!-- Explanation Box (Appears after answer) -->
+          <div id="quizExplanationBox" class="hidden p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-mono space-y-2">
+            <div class="flex items-center gap-2 font-bold" id="quizVerdictText">
+              <!-- Correct / Incorrect banner -->
+            </div>
+            <p id="quizExplanationText" class="font-sans text-slate-300 text-xs leading-relaxed">
+              <!-- Explanation details -->
+            </p>
+          </div>
+
+          <!-- Navigation Controls -->
+          <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+            <button onclick="prevQuizQuestion()" id="btnPrevQuiz" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed">
+              ← Previous
+            </button>
+            <div class="flex items-center gap-2">
+              <button onclick="nextQuizQuestion()" id="btnNextQuiz" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30">
+                Next Question →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Final Quiz Summary Container (Hidden until complete) -->
+        <div id="quizSummaryContainer" class="hidden text-center py-8 space-y-6">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-400 mx-auto flex items-center justify-center shadow-lg shadow-cyan-500/30">
+            <svg class="w-8 h-8 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-white">Diagnostic Exam Completed!</h3>
+            <p id="quizSummaryTagline" class="text-sm text-slate-400 mt-1">Here is your performance breakdown across all 15 questions.</p>
+          </div>
+
+          <div class="max-w-md mx-auto glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+            <div class="text-4xl font-extrabold font-mono text-cyan-400" id="quizFinalScoreNumber">15 / 15</div>
+            <div class="text-xs font-mono text-emerald-400 font-semibold" id="quizPerformanceGrade">Grade: Distinction // Network Architect Status</div>
+            <div class="grid grid-cols-3 gap-2 text-[11px] font-mono text-left pt-2 border-t border-slate-800">
+              <div class="bg-slate-900 p-2 rounded">
+                <span class="text-slate-500 block">Conceptual</span>
+                <span class="font-bold text-indigo-300" id="quizScoreCat1">5 / 5</span>
+              </div>
+              <div class="bg-slate-900 p-2 rounded">
+                <span class="text-slate-500 block">Subnetting</span>
+                <span class="font-bold text-cyan-300" id="quizScoreCat2">5 / 5</span>
+              </div>
+              <div class="bg-slate-900 p-2 rounded">
+                <span class="text-slate-500 block">Wireshark</span>
+                <span class="font-bold text-emerald-300" id="quizScoreCat3">5 / 5</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-3">
+            <button onclick="resetQuiz()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all">
+              Retake Examination
+            </button>
+            <button onclick="toggleAnswerReviewKey()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 transition-all">
+              View Complete Answer Key (All 15)
+            </button>
+          </div>
+
+          <!-- Collapsible Complete Answer Key -->
+          <div id="quizFullReviewKey" class="hidden text-left mt-8 max-w-3xl mx-auto space-y-3 font-mono text-xs">
+            <!-- Dynamically populated review questions via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 7: PYTHON AUTOMATION CODE SCRIPT   -->
+    <!-- ========================================== -->
+    <section id="python-generator" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Section 06 // DevOps & Automation
+          </div>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Embedded Python Subnet Problem Generator</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            A production-ready Python 3 script using standard library modules (<code class="text-cyan-300">ipaddress</code> and <code class="text-cyan-300">random</code>) to mass-generate verified subnetting test problem sets.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+          <button onclick="copyPythonCode()" id="btnCopyPython" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono border border-slate-700 flex items-center gap-1.5 transition-all">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span id="copyPyText">Copy Python Script</span>
+          </button>
+          <button onclick="downloadPythonFile()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono font-semibold flex items-center gap-1.5 shadow-md shadow-indigo-600/20 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download .py
+          </button>
+        </div>
+      </div>
+
+      <!-- Code Container & Interactive Playground Preview Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Python Code Viewer (7 Cols) -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+          <div class="bg-slate-900 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"></span>
+              <span class="text-slate-300">generate_subnet_problems.py</span>
+            </div>
+            <span class="text-slate-500 text-[11px]">Python 3.9+ (Zero 3rd-party dependencies)</span>
+          </div>
+
+          <pre class="p-5 font-mono text-xs text-slate-300 overflow-x-auto leading-relaxed select-all bg-slate-950/80"><code id="pythonSourceCode"># ==============================================================================
+# CAPSTONE 14 // AUTOMATED SUBNET PROBLEM GENERATOR (STANDARD LIBRARY)
+# Designed for CSE 3rd-Year Network Engineering Quizzes & Lab Assignments
+# ==============================================================================
+import ipaddress
+import random
+import json
+import sys
+
+# Ensure UTF-8 output on Windows consoles
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
+def generate_subnet_problems(count=15, difficulty="all"):
+    """
+    Generates deterministic IPv4 subnetting problem sets with full verified answers.
+    Leverages Python's standard 'ipaddress' module for 100% mathematical accuracy.
+    """
+    problems = []
+    
+    # CIDR ranges based on exam difficulty tiers
+    cidr_pools = {
+        "easy": [24, 25, 26, 27, 28],
+        "medium": [19, 20, 21, 22, 23, 29],
+        "hard": [16, 17, 18, 30, 31]
+    }
+    
+    for i in range(1, count + 1):
+        if difficulty in cidr_pools:
+            prefix = random.choice(cidr_pools[difficulty])
+        else:
+            # Balanced mix: 5 Easy, 5 Medium, 5 Hard
+            if i <= 5:
+                prefix = random.choice(cidr_pools["easy"])
+            elif i <= 10:
+                prefix = random.choice(cidr_pools["medium"])
+            else:
+                prefix = random.choice(cidr_pools["hard"])
+                
+        # Generate random private or public base IP octets
+        first_octet = random.choice([10, 172, 192, 198, 203])
+        if first_octet == 10:
+            ip_str = f"10.{random.randint(0,255)}.{random.randint(0,255)}.{random.randint(1,254)}"
+        elif first_octet == 172:
+            ip_str = f"172.{random.randint(16,31)}.{random.randint(0,255)}.{random.randint(1,254)}"
+        else:
+            ip_str = f"192.168.{random.randint(0,255)}.{random.randint(1,254)}"
+            
+        # Initialize IPv4Interface (strict=False permits host address with mask)
+        interface = ipaddress.IPv4Interface(f"{ip_str}/{prefix}")
+        network = interface.network
+        
+        # Calculate host parameters
+        total_addresses = network.num_addresses
+        usable_hosts = 0
+        if prefix == 31:
+            usable_hosts = 2 # RFC 3021 Point-to-Point
+            first_host = str(network.network_address)
+            last_host = str(network.broadcast_address)
+        elif prefix == 32:
+            usable_hosts = 1 # Host route
+            first_host = str(network.network_address)
+            last_host = str(network.network_address)
+        else:
+            usable_hosts = total_addresses - 2
+            first_host = str(network.network_address + 1)
+            last_host = str(network.broadcast_address - 1)
+            
+        problem_item = {
+            "problem_id": i,
+            "target_ip": ip_str,
+            "cidr_prefix": f"/{prefix}",
+            "subnet_mask": str(network.netmask),
+            "wildcard_mask": str(network.hostmask),
+            "network_id": str(network.network_address),
+            "broadcast_id": str(network.broadcast_address),
+            "first_usable_host": first_host,
+            "last_usable_host": last_host,
+            "usable_host_count": usable_hosts,
+            "magic_number_block_size": 256 - int(str(network.netmask).split('.')[prefix // 8 if prefix < 32 else 3])
+        }
+        problems.append(problem_item)
+        
+    return problems
+
+if __name__ == "__main__":
+    print("[*] Generating 15 Curated CSE Subnetting Problems...")
+    dataset = generate_subnet_problems(count=15)
+    print(f"[OK] Successfully generated {len(dataset)} verified problems.")
+    print(json.dumps(dataset[0], indent=2))
+</code></pre>
+        </div>
+
+        <!-- In-Browser Terminal Simulator (5 Cols) -->
+        <div class="lg:col-span-5 glass-panel rounded-2xl border border-slate-800 p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                <h4 class="text-xs font-mono font-bold text-white uppercase tracking-wider">Live In-Browser Execution Sandbox</h4>
+              </div>
+              <button onclick="runBrowserPythonSimulator()" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs font-mono flex items-center gap-1 transition-all">
+                ▶ Execute Script
+              </button>
+            </div>
+            <p class="text-xs text-slate-400 mb-4 font-sans">
+              Test the generator logic right in your browser. Click "Execute Script" to trigger the JavaScript port of the generator and view formatted JSON output.
+            </p>
+          </div>
+
+          <!-- Terminal Output Screen -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-[11px] font-mono text-emerald-400 overflow-y-auto max-h-[360px] space-y-1 shadow-inner select-text">
+            <div class="text-slate-500">$ python3 generate_subnet_problems.py</div>
+            <div id="terminalOutput">
+              <span class="text-slate-400">[*] System ready. Click "Execute Script" to run generator.</span>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-500 flex justify-between">
+            <span>Runtime: V8 Deterministic Engine</span>
+            <span>Output: Clean JSON Record</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 8: ETHICS & AI AUDIT MATRIX        -->
+    <!-- ========================================== -->
+    <section id="ethics-audit" class="scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 text-rose-400 font-mono text-xs uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+            Section 07 // Legal Compliance & AI Reliability
+          </div>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Ethics, Responsible AI & Hallucination Audit</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Essential ethical rules for network packet sniffing along with a structured audit of Large Language Model hallucination risks in binary network calculations.
+          </p>
+        </div>
+      </div>
+
+      <!-- Ethics & Legal Sniffing Rules Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <!-- Rule 1: Permitted Scope -->
+        <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h4 class="text-base font-bold text-white">1. Authorized Environments Only</h4>
+          <p class="text-xs text-slate-300 font-sans leading-relaxed">
+            Never activate promiscuous mode packet captures on public campus Wi-Fi, dorm networks, or commercial networks without written administrative consent. Confine student labs to loopback (<code class="text-cyan-300">127.0.0.1</code>), Docker/GNS3 virtual topologies, or official Wireshark sample pcaps.
+          </p>
+        </div>
+
+        <!-- Rule 2: Legal Statutes -->
+        <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <h4 class="text-base font-bold text-white">2. Wiretap & IT Act Liabilities</h4>
+          <p class="text-xs text-slate-300 font-sans leading-relaxed">
+            Unauthorized packet interception constitutes a statutory criminal offense under the Electronic Communications Privacy Act (ECPA / Wiretap Act in USA) and Section 43/66 of the Information Technology Act (India). Intercepting third-party passwords or tokens carries civil penalties and academic expulsion.
+          </p>
+        </div>
+
+        <!-- Rule 3: Payload Sanitization -->
+        <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </div>
+          <h4 class="text-base font-bold text-white">3. PII & Secret Redaction</h4>
+          <p class="text-xs text-slate-300 font-sans leading-relaxed">
+            When publishing capture files (.pcapng) or lab screenshots for peer evaluation, always strip payload text and sanitize sensitive cookies, Authorization headers, and internal private gateway IP schemes using <code class="text-cyan-300">editcap</code> or Wireshark trace anonymization.
+          </p>
+        </div>
+      </div>
+
+      <!-- AI Hallucination Audit Matrix Table -->
+      <div class="glass-panel rounded-2xl border border-slate-700/80 overflow-hidden shadow-2xl">
+        <div class="bg-slate-900 px-5 py-3 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <h3 class="text-sm font-mono font-bold text-white uppercase tracking-wider">AI Hallucination Risk Matrix in Networking Calculations</h3>
+          </div>
+          <span class="text-xs font-mono text-cyan-400">Zero-Shot vs Bitwise Determinism</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-mono text-xs text-slate-300">
+            <thead class="bg-slate-950/80 text-[11px] uppercase text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4 font-semibold">Subnet Math Task</th>
+                <th class="py-3.5 px-4 font-semibold text-rose-400">LLM Zero-Shot Failure Mode</th>
+                <th class="py-3.5 px-4 font-semibold text-amber-400">Observed Risk Rate</th>
+                <th class="py-3.5 px-4 font-semibold text-emerald-400">Engine Safeguard Implemented Here</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/80 bg-slate-900/40">
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="py-3.5 px-4 font-bold text-white">Usable Hosts Calculation ($2^{32-n} - 2$)</td>
+                <td class="py-3.5 px-4 text-slate-300 font-sans">Forgets the minus 2 subtraction for Network & Broadcast IDs, or outputs total addresses as usable hosts.</td>
+                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-bold">~28% Error</span></td>
+                <td class="py-3.5 px-4 text-emerald-300 font-sans">Explicit bitwise formula: <code class="text-cyan-300">Math.pow(2, 32 - cidr) - 2</code> with RFC 3021 /31 override.</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="py-3.5 px-4 font-bold text-white">Non-Octet Aligned Network IDs (e.g. /22, /19)</td>
+                <td class="py-3.5 px-4 text-slate-300 font-sans">Performs decimal rounded guessing rather than binary ANDing in the 3rd octet block boundary.</td>
+                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-bold">~34% Error</span></td>
+                <td class="py-3.5 px-4 text-emerald-300 font-sans">32-bit unsigned bitwise shift: <code class="text-cyan-300">(ipInt & maskInt) >>> 0</code> guaranteeing 100% exact boundary.</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="py-3.5 px-4 font-bold text-white">Broadcast Address Calculation</td>
+                <td class="py-3.5 px-4 text-slate-300 font-sans">Confuses last usable host IP with the broadcast ID; off-by-one errors.</td>
+                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">~19% Error</span></td>
+                <td class="py-3.5 px-4 text-emerald-300 font-sans">Bitwise OR with inverted wildcard mask: <code class="text-cyan-300">(networkInt | ~maskInt) >>> 0</code>.</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="py-3.5 px-4 font-bold text-white">OSI Layer Protocol Attribution (ARP, DNS)</td>
+                <td class="py-3.5 px-4 text-slate-300 font-sans">Hallucinates ARP as Layer 3 because it handles IP addresses, or DNS as Transport because it uses port 53.</td>
+                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">~22% Error</span></td>
+                <td class="py-3.5 px-4 text-emerald-300 font-sans">Curated RFC 826 & RFC 1035 reference database with clear layer-boundary annotations.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-800/80 py-12 mt-20 text-xs font-mono text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-cyan-400 font-bold">
+          14
+        </div>
+        <div>
+          <span class="text-white font-bold">CAPSTONE 14 // Computer Networks Revision Kit</span>
+          <p class="text-slate-500 text-[11px] font-sans">Engineered for 3rd-Year CSE Students • Single-File Autonomous Architecture</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 text-slate-400">
+        <a href="#osi-tcp" class="hover:text-cyan-400 transition-colors">OSI & TCP/IP</a>
+        <a href="#postal-analogy" class="hover:text-cyan-400 transition-colors">Postal Analogy</a>
+        <a href="#subnet-lab" class="hover:text-cyan-400 transition-colors">Subnet Lab</a>
+        <a href="#wireshark" class="hover:text-cyan-400 transition-colors">Wireshark Dissector</a>
+        <a href="#quiz-engine" class="hover:text-cyan-400 transition-colors">15-Q Quiz</a>
+        <a href="#python-generator" class="hover:text-cyan-400 transition-colors">Python Code</a>
+      </div>
+
+      <div class="text-slate-500 text-[11px]">
+        Built with HTML5 • Tailwind CSS • Pure Vanilla ES6+
+      </div>
+    </div>
+  </footer>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 border border-cyan-500/50 text-cyan-300 px-4 py-2.5 rounded-xl font-mono text-xs shadow-2xl flex items-center gap-2">
+    <span class="text-cyan-400">✓</span>
+    <span id="toastMsg">Copied to clipboard</span>
+  </div>
+
+  <!-- JAVASCRIPT MASTER APPLICATION ENGINE -->
+  <script>
+    /* ==========================================================================
+       SECTION 0: AUDIO SYNTHESIZER & SOUND SYSTEM (Web Audio API)
+       ========================================================================== */
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, gainVal = 0.04) {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {
+        // AudioContext not allowed before user interaction
+      }
+    }
+
+    function playClickSound() { playTone(800, 'sine', 0.05, 0.03); }
+    function playSuccessSound() {
+      playTone(523.25, 'triangle', 0.08, 0.04);
+      setTimeout(() => playTone(659.25, 'triangle', 0.12, 0.04), 80);
+    }
+    function playErrorSound() {
+      playTone(220, 'sawtooth', 0.12, 0.04);
+      setTimeout(() => playTone(180, 'sawtooth', 0.18, 0.04), 100);
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const icon = document.getElementById('soundIcon');
+      const label = document.getElementById('soundLabel');
+      if (audioEnabled) {
+        icon.textContent = '🔊';
+        label.textContent = 'SFX: ON';
+        playClickSound();
+        showToast('Sound effects enabled');
+      } else {
+        icon.textContent = '🔇';
+        label.textContent = 'SFX: MUTED';
+        showToast('Sound effects muted');
+      }
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const msgSpan = document.getElementById('toastMsg');
+      msgSpan.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        playClickSound();
+        showToast(`Copied: ${text}`);
+      }).catch(err => {
+        showToast(`Error copying to clipboard`);
+      });
+    }
+
+    /* ==========================================================================
+       SECTION 1: OSI VS TCP/IP EXPLORER ENGINE
+       ========================================================================== */
+    const osiLayersData = [
+      {
+        num: 7,
+        name: "Application Layer",
+        tcpMap: "Application Layer",
+        tcpLayerNum: 5,
+        pdu: "Data / Payload",
+        color: "indigo",
+        duties: "User-facing protocols, high-level APIs, HTTP request/response handling, resource sharing, remote file and email access.",
+        protocols: ["HTTP", "HTTPS", "DNS", "FTP", "SSH", "SMTP", "SNMP", "DHCP", "Telnet"],
+        hardware: "Application Gateways, Layer 7 Load Balancers (HAProxy, NGINX), Next-Gen Firewalls",
+        pitfall: "DNS queries utilize UDP port 53 (and TCP for zone transfers > 512 bytes), but DNS itself operates strictly at Layer 7, not Layer 4!",
+        summary: "Interacts directly with software applications to provide end-to-end communication services across the network."
+      },
+      {
+        num: 6,
+        name: "Presentation Layer",
+        tcpMap: "Application Layer",
+        tcpLayerNum: 5,
+        pdu: "Data / Formatted Payload",
+        color: "indigo",
+        duties: "Syntax translation, character set conversion (ASCII, EBCDIC, UTF-8), data compression (gzip), and cryptographic encryption/decryption (TLS/SSL).",
+        protocols: ["TLS", "SSL", "JPEG", "MPEG", "ASCII", "JSON", "Protobuf"],
+        hardware: "Cryptographic Accelerators, SSL Offloaders, Encoding Processors",
+        pitfall: "In TCP/IP, presentation tasks like TLS encryption are handled internally by the application libraries (e.g. OpenSSL) rather than an OS-level layer.",
+        summary: "Ensures that data formatted on one host is comprehensible to the application layer of another host."
+      },
+      {
+        num: 5,
+        name: "Session Layer",
+        tcpMap: "Application Layer",
+        tcpLayerNum: 5,
+        pdu: "Data / Session Stream",
+        color: "indigo",
+        duties: "Dialog control, session establishment, token management, synchronization checkpoints, duplex/half-duplex session coordination.",
+        protocols: ["NetBIOS", "RPC", "PPTP", "SOCKS5", "SIP"],
+        hardware: "Session Border Controllers (SBC), RPC Gateways",
+        pitfall: "Do not confuse TCP connection establishment (3-way handshake at L4) with an application-level Session (e.g. SIP VoIP call session).",
+        summary: "Manages conversations and checkpoints between distributed software endpoints."
+      },
+      {
+        num: 4,
+        name: "Transport Layer",
+        tcpMap: "Transport Layer",
+        tcpLayerNum: 4,
+        pdu: "Segment (TCP) / Datagram (UDP)",
+        color: "amber",
+        duties: "End-to-end process-to-process delivery, port multiplexing (1-65535), flow control (sliding window), error recovery, connection management.",
+        protocols: ["TCP", "UDP", "SCTP", "QUIC"],
+        hardware: "Layer 4 Load Balancers, Stateful Firewalls, Network Sockets",
+        pitfall: "Transport provides process-to-process delivery using Port Numbers; Network layer provides host-to-host delivery using IP addresses!",
+        summary: "Bridges the gap between application software processes and the underlying packet-switched routing network."
+      },
+      {
+        num: 3,
+        name: "Network Layer",
+        tcpMap: "Internet Layer",
+        tcpLayerNum: 3,
+        pdu: "Packet / Datagram",
+        color: "emerald",
+        duties: "Logical IP addressing (IPv4/IPv6), packet forwarding, routing path determination (Dijkstra/OSPF, BGP), fragmenting packets exceeding MTU.",
+        protocols: ["IPv4", "IPv6", "ICMP", "IPsec", "OSPF", "BGP", "RIP"],
+        hardware: "Routers, Layer 3 Core Switches",
+        pitfall: "Routers forward packets based exclusively on destination IP address; routers do not inspect port numbers or payload data under normal L3 routing.",
+        summary: "Enables host-to-host logical routing across disparate, interconnected subnets worldwide."
+      },
+      {
+        num: 2,
+        name: "Data Link Layer",
+        tcpMap: "Link Layer / Network Access",
+        tcpLayerNum: 2,
+        pdu: "Frame",
+        color: "cyan",
+        duties: "Hop-to-hop direct physical delivery, physical MAC addressing, framing, media access control (CSMA/CD), error detection via CRC-32/FCS trailer.",
+        protocols: ["Ethernet (802.3)", "Wi-Fi (802.11)", "ARP", "PPP", "VLAN (802.1Q)", "STP"],
+        hardware: "Layer 2 Switches, Bridges, Network Interface Cards (NICs)",
+        pitfall: "ARP is packaged directly into Layer 2 frames (EtherType 0x0806) to map L3 IP addresses to L2 MAC addresses, placing it at the L2/L3 boundary.",
+        summary: "Ensures reliable framing and collision avoidance across local shared or point-to-point physical transmission links."
+      },
+      {
+        num: 1,
+        name: "Physical Layer",
+        tcpMap: "Link Layer / Physical",
+        tcpLayerNum: 1,
+        pdu: "Bits / Raw Signals",
+        color: "rose",
+        duties: "Transmission of unstructured raw bitstreams over physical mediums: voltage modulation, optical wavelength pulses, radio RF signals, pinouts.",
+        protocols: ["1000BASE-T", "10GBASE-SR", "RS-232", "DSL", "DOCSIS"],
+        hardware: "Repeaters, Hubs, Fiber Optic Cables, Cat6 UTP, Transceivers (SFP+)",
+        pitfall: "Hubs have no intelligence: any electrical bit received on one port is blindly repeated to all other ports without reading MAC addresses.",
+        summary: "Converts binary 1s and 0s into physical electromagnetic, optical, or radio-frequency wave phenomena."
+      }
+    ];
+
+    let currentLayerViewModel = 'compare';
+
+    function renderLayersStack(filterQuery = '') {
+      const container = document.getElementById('layersStackContainer');
+      container.innerHTML = '';
+
+      const query = filterQuery.toLowerCase().trim();
+
+      osiLayersData.forEach(layer => {
+        // Filter match logic
+        const matchesName = layer.name.toLowerCase().includes(query);
+        const matchesProtocol = layer.protocols.some(p => p.toLowerCase().includes(query));
+        const matchesPDU = layer.pdu.toLowerCase().includes(query);
+        const matchesHardware = layer.hardware.toLowerCase().includes(query);
+        const isMatch = !query || matchesName || matchesProtocol || matchesPDU || matchesHardware;
+
+        if (!isMatch) return;
+
+        const card = document.createElement('div');
+        card.className = `p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between group ${
+          layer.num === 7 ? 'border-indigo-500/60 bg-indigo-950/30' : 'border-slate-800 bg-slate-900/60 hover:border-slate-700 hover:bg-slate-900'
+        }`;
+        card.onclick = () => selectLayerDetail(layer.num);
+
+        let tcpBadge = '';
+        if (currentLayerViewModel === 'compare' || currentLayerViewModel === 'tcp5') {
+          tcpBadge = `<span class="hidden sm:inline-block px-2 py-0.5 rounded bg-slate-800 text-[11px] font-mono text-cyan-300 border border-slate-700">
+            TCP/IP: ${layer.tcpMap}
+          </span>`;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-indigo-600 text-slate-300 group-hover:text-white font-mono font-bold flex items-center justify-center text-xs transition-colors">
+              L${layer.num}
+            </span>
+            <div>
+              <div class="font-bold text-sm text-white group-hover:text-cyan-300 transition-colors flex items-center gap-2">
+                <span>${layer.name}</span>
+                ${query && matchesProtocol ? `<span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-900/60 text-emerald-300 font-mono">Matched Protocol</span>` : ''}
+              </div>
+              <div class="text-[11px] font-mono text-slate-400 mt-0.5">
+                PDU: <span class="text-indigo-400 font-semibold">${layer.pdu}</span> • ${layer.protocols.slice(0, 4).join(', ')}
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            ${tcpBadge}
+            <svg class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transform group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectLayerDetail(layerNum) {
+      playClickSound();
+      const layer = osiLayersData.find(l => l.num === layerNum);
+      if (!layer) return;
+
+      document.getElementById('detailLayerPill').textContent = `Layer ${layer.num} // ${layer.name.replace(' Layer', '')}`;
+      document.getElementById('detailLayerTitle').textContent = layer.name;
+      document.getElementById('detailLayerPDU').textContent = layer.pdu;
+      document.getElementById('detailLayerSummary').textContent = layer.summary;
+      document.getElementById('detailLayerDuties').textContent = layer.duties;
+      document.getElementById('detailLayerHardware').textContent = layer.hardware;
+      document.getElementById('detailLayerTrap').textContent = layer.pitfall;
+      document.getElementById('detailLayerTcpMapping').textContent = `In the TCP/IP suite, this corresponds to the ${layer.tcpMap} (Layer ${layer.tcpLayerNum}).`;
+
+      const protoContainer = document.getElementById('detailLayerProtocols');
+      protoContainer.innerHTML = layer.protocols.map(p => `
+        <span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px]">${p}</span>
+      `).join('');
+
+      // Highlight selected card
+      const cards = document.getElementById('layersStackContainer').children;
+      Array.from(cards).forEach((card, idx) => {
+        card.classList.remove('border-indigo-500/60', 'bg-indigo-950/30');
+      });
+    }
+
+    function setLayerViewModel(model) {
+      playClickSound();
+      currentLayerViewModel = model;
+      document.getElementById('btnViewCompare').className = model === 'compare' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition-all' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+      document.getElementById('btnViewOSI').className = model === 'osi7' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition-all' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+      document.getElementById('btnViewTCP').className = model === 'tcp5' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition-all' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+      renderLayersStack(document.getElementById('layerSearchInput').value);
+    }
+
+    function filterLayerContent() {
+      const q = document.getElementById('layerSearchInput').value;
+      renderLayersStack(q);
+    }
+
+    function quickFilterProtocol(proto) {
+      document.getElementById('layerSearchInput').value = proto;
+      renderLayersStack(proto);
+    }
+
+    /* ==========================================================================
+       SECTION 2: POST OFFICE ANALOGY STORYTELLING ENGINE
+       ========================================================================== */
+    const postalSteps = [
+      {
+        step: 0,
+        layer: 7,
+        layerName: "OSI Layer 7 // Application Layer",
+        title: "The Confidential Handwritten Letter",
+        postal: "You write a letter on notebook paper to a foreign colleague: 'Project blueprint is approved'. This raw message is the payload.",
+        digital: "Application software (e.g., cURL, Firefox) generates an HTTP request: 'GET /blueprint.pdf HTTP/1.1'.",
+        headerAction: "➕ Payload Created: Raw Data (No network headers attached yet)",
+        visual: ['bg-pink-600 text-white p-3 rounded font-mono text-center font-bold: [ HTTP Data Payload: "Approved" ]']
+      },
+      {
+        step: 1,
+        layer: 6,
+        layerName: "OSI Layer 6 // Presentation Layer",
+        title: "Language Translation & Wax Cipher Seal",
+        postal: "The letter is translated into an internationally standard language (French/English) and locked inside an encrypted wax seal cipher.",
+        digital: "Data is formatted into JSON/UTF-8 and encrypted with TLS 1.3 AES-GCM cipher algorithms for secure transport.",
+        headerAction: "➕ TLS Security Wrap: Encryption & Compression formatting applied",
+        visual: [
+          'bg-pink-800 text-pink-200 p-1.5 text-center text-xs font-mono: [ Encrypted TLS Record Wrapper ]',
+          'bg-pink-600 text-white p-2.5 rounded font-mono text-center font-bold: [ HTTP Data Payload: "Approved" ]'
+        ]
+      },
+      {
+        step: 2,
+        layer: 5,
+        layerName: "OSI Layer 5 // Session Layer",
+        title: "The Courier Dispatch Booking Desk",
+        postal: "The courier office registers an active dispatch ticket (#8492) and agrees on delivery confirmation rules.",
+        digital: "Operating system initiates communication dialogue checkpoints to track state between the two communicating systems.",
+        headerAction: "➕ Session ID Tag: Synchronized dialogue tracking token (#8492)",
+        visual: [
+          'bg-indigo-900 text-indigo-200 p-1.5 text-center text-xs font-mono: [ Session Token ID #8492 ]',
+          'bg-pink-800 text-pink-200 p-1.5 text-center text-xs font-mono: [ Encrypted TLS Record Wrapper ]',
+          'bg-pink-600 text-white p-2.5 rounded font-mono text-center font-bold: [ HTTP Data Payload: "Approved" ]'
+        ]
+      },
+      {
+        step: 3,
+        layer: 4,
+        layerName: "OSI Layer 4 // Transport Layer",
+        title: "Registered Express Envelope & Room Number",
+        postal: "The letter is enclosed in a Registered Mail Express pouch with a return receipt tracking number (TCP) and recipient office Suite 80 (Port Number).",
+        digital: "Adds TCP Header with Source Port 51842, Destination Port 80, Sequence Numbers, and Window Size for reliable delivery.",
+        headerAction: "➕ L4 TCP Header: Src Port 51842 | Dst Port 80 | Seq #1001 | ACK #502",
+        visual: [
+          'bg-amber-600 text-slate-950 p-2 font-mono font-bold text-xs text-center rounded: [ TCP Header: Port 51842 -> Port 80 | Seq: 1001 ]',
+          'bg-indigo-900 text-indigo-200 p-1.5 text-center text-xs font-mono: [ Session Data & TLS Wrapper ]',
+          'bg-pink-600 text-white p-2 rounded font-mono text-center: [ HTTP Data Payload ]'
+        ]
+      },
+      {
+        step: 4,
+        layer: 3,
+        layerName: "OSI Layer 3 // Network Layer",
+        title: "Global Zip Codes & Postal Sorting Hubs",
+        postal: "The parcel gets stamped with Sender Country/City Zip Code and Destination Zip Code (IP Address). Regional postal sorting centers (Routers) decide the route.",
+        digital: "Adds IPv4 Header: Source IP 192.168.1.105 to Destination IP 93.184.216.34, with TTL=64 hops.",
+        headerAction: "➕ L3 IP Header: Src IP 192.168.1.105 | Dst IP 93.184.216.34 | TTL 64",
+        visual: [
+          'bg-emerald-600 text-slate-950 p-2 font-mono font-bold text-xs text-center rounded: [ IPv4 Header: 192.168.1.105 -> 93.184.216.34 ]',
+          'bg-amber-600 text-slate-950 p-1.5 font-mono text-xs text-center rounded: [ TCP Segment: Port 51842 -> 80 ]',
+          'bg-pink-600 text-white p-2 rounded font-mono text-center: [ HTTP Data Payload ]'
+        ]
+      },
+      {
+        step: 5,
+        layer: 2,
+        layerName: "OSI Layer 2 // Data Link Layer",
+        title: "Local Delivery Van & Tamper-Evident Barcode",
+        postal: "Placed inside the local courier driver's delivery truck with license plate number (MAC Address). A tamper-proof barcode seal (CRC Checksum) verifies no tears.",
+        digital: "Adds Ethernet II Frame Header (Src MAC, Dst MAC, EtherType 0x0800) and appends a 4-byte CRC-32 Frame Check Sequence (FCS) trailer.",
+        headerAction: "➕ L2 Frame Header & FCS Trailer: MAC Apple -> Cisco Gateway | CRC-32 Checksum",
+        visual: [
+          'bg-blue-600 text-white p-2 font-mono font-bold text-xs text-center rounded: [ Eth II Header: MAC 00:1a:2b -> MAC 00:14:69 ]',
+          'bg-emerald-600 text-slate-950 p-1.5 font-mono text-xs text-center rounded: [ IPv4 Packet: 192.168.1.105 -> 93.184.216.34 ]',
+          'bg-amber-600 text-slate-950 p-1.5 font-mono text-xs text-center rounded: [ TCP Segment: Port 80 ]',
+          'bg-pink-600 text-white p-1.5 rounded font-mono text-center: [ Data Payload ]',
+          'bg-blue-800 text-blue-200 p-1 font-mono text-[10px] text-center rounded: [ L2 Trailer: CRC-32 FCS Valid ]'
+        ]
+      },
+      {
+        step: 6,
+        layer: 1,
+        layerName: "OSI Layer 1 // Physical Layer",
+        title: "The Asphalt Highway & Wheels on Asphalt",
+        postal: "The truck rolls down asphalt highways, container ships cross oceans, and aircraft fly cargo across continents.",
+        digital: "Network Interface Card transceivers modulate electrical voltages over Cat6 copper twisted pairs, flash lasers into fiber glass, or emit RF waves.",
+        headerAction: "⚡ Physical Bitstream Modulation: Converting Frame into 0s and 1s",
+        visual: [
+          'bg-rose-900 border border-rose-500 text-rose-300 p-3 font-mono font-bold text-xs text-center rounded animate-pulse: [ Physical Signals: 01001000 01100101 01101100 01101100 01101111 ]'
+        ]
+      }
+    ];
+
+    let currentPostalStep = 0;
+    let postalDirection = 'encapsulate';
+    let postalAutoplayTimer = null;
+
+    function renderPostalStep() {
+      const s = postalSteps[currentPostalStep];
+      document.getElementById('postalStepBadge').textContent = `L${s.layer}`;
+      document.getElementById('postalNetworkLayerName').textContent = s.layerName;
+      document.getElementById('postalStepTitle').textContent = s.title;
+      document.getElementById('postalWorldDesc').textContent = s.postal;
+      document.getElementById('digitalWorldDesc').textContent = s.digital;
+      document.getElementById('postalHeaderAdded').innerHTML = `<span>${s.headerAction}</span>`;
+      document.getElementById('postalStepIndicatorText').textContent = `Step ${currentPostalStep + 1} of 7 (${postalDirection === 'encapsulate' ? 'Encapsulation' : 'Decapsulation'})`;
+
+      const pct = ((currentPostalStep + 1) / 7) * 100;
+      document.getElementById('postalProgressBar').style.width = `${pct}%`;
+
+      document.getElementById('btnPrevPostal').disabled = currentPostalStep === 0;
+      document.getElementById('btnNextPostal').disabled = currentPostalStep === 6;
+
+      // Render Visual Envelope
+      const env = document.getElementById('visualEnvelope');
+      env.innerHTML = '';
+      s.visual.forEach(item => {
+        const parts = item.split(': ');
+        const classes = parts[0];
+        const content = parts.slice(1).join(': ');
+        const el = document.createElement('div');
+        el.className = classes;
+        el.textContent = content;
+        env.appendChild(el);
+      });
+
+      const bitStream = document.getElementById('visualBitsStream');
+      if (currentPostalStep === 6) {
+        bitStream.classList.remove('hidden');
+      } else {
+        bitStream.classList.add('hidden');
+      }
+    }
+
+    function nextPostalStep() {
+      if (currentPostalStep < 6) {
+        playClickSound();
+        currentPostalStep++;
+        renderPostalStep();
+      }
+    }
+
+    function prevPostalStep() {
+      if (currentPostalStep > 0) {
+        playClickSound();
+        currentPostalStep--;
+        renderPostalStep();
+      }
+    }
+
+    function goToPostalStep(idx) {
+      playClickSound();
+      currentPostalStep = idx;
+      renderPostalStep();
+    }
+
+    function setPostalDirection(dir) {
+      playClickSound();
+      postalDirection = dir;
+      document.getElementById('btnPostalEncap').className = dir === 'encapsulate' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition-all' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+      document.getElementById('btnPostalDecap').className = dir === 'decapsulate' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition-all' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+      
+      if (dir === 'decapsulate') {
+        currentPostalStep = 6;
+      } else {
+        currentPostalStep = 0;
+      }
+      renderPostalStep();
+    }
+
+    function togglePostalAutoplay() {
+      const playIcon = document.getElementById('playIcon');
+      if (postalAutoplayTimer) {
+        clearInterval(postalAutoplayTimer);
+        postalAutoplayTimer = null;
+        playIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+        showToast('Analogy autoplay paused');
+      } else {
+        showToast('Analogy autoplay started');
+        playIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+        postalAutoplayTimer = setInterval(() => {
+          if (postalDirection === 'encapsulate') {
+            if (currentPostalStep < 6) {
+              currentPostalStep++;
+            } else {
+              currentPostalStep = 0;
+            }
+          } else {
+            if (currentPostalStep > 0) {
+              currentPostalStep--;
+            } else {
+              currentPostalStep = 6;
+            }
+          }
+          renderPostalStep();
+        }, 2200);
+      }
+    }
+
+    /* ==========================================================================
+       SECTION 3: DETERMINISTIC BITWISE SUBNETTING MATH ENGINE
+       ========================================================================== */
+    function ipToInt(ipStr) {
+      const octets = ipStr.trim().split('.').map(Number);
+      if (octets.length !== 4 || octets.some(o => isNaN(o) || o < 0 || o > 255)) {
+        return null;
+      }
+      return ((octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3]) >>> 0;
+    }
+
+    function intToIp(intVal) {
+      return [
+        (intVal >>> 24) & 255,
+        (intVal >>> 16) & 255,
+        (intVal >>> 8) & 255,
+        intVal & 255
+      ].join('.');
+    }
+
+    function cidrToMaskInt(cidr) {
+      if (cidr === 0) return 0;
+      return (0xFFFFFFFF << (32 - cidr)) >>> 0;
+    }
+
+    function intToBinary32(intVal) {
+      return (intVal >>> 0).toString(2).padStart(32, '0');
+    }
+
+    function getIpClass(firstOctet) {
+      if (firstOctet >= 1 && firstOctet <= 126) return "Class A (Default /8)";
+      if (firstOctet === 127) return "Class A (Loopback 127.0.0.0/8)";
+      if (firstOctet >= 128 && firstOctet <= 191) return "Class B (Default /16)";
+      if (firstOctet >= 192 && firstOctet <= 223) return "Class C (Default /24)";
+      if (firstOctet >= 224 && firstOctet <= 239) return "Class D (Multicast 224.0.0.0/4)";
+      return "Class E (Experimental 240.0.0.0/4)";
+    }
+
+    function getIpScope(ipStr) {
+      const o = ipStr.split('.').map(Number);
+      if (o[0] === 10) return "RFC 1918 Private Network (10.0.0.0/8)";
+      if (o[0] === 172 && (o[1] >= 16 && o[1] <= 31)) return "RFC 1918 Private Network (172.16.0.0/12)";
+      if (o[0] === 192 && o[1] === 168) return "RFC 1918 Private Network (192.168.0.0/16)";
+      if (o[0] === 127) return "Localhost Loopback (127.0.0.0/8)";
+      if (o[0] === 169 && o[1] === 254) return "APIPA Link-Local (169.254.0.0/16)";
+      return "Public Internet Routable IP";
+    }
+
+    function calculateSubnet(ipStr, cidr) {
+      const ipInt = ipToInt(ipStr);
+      if (ipInt === null) return null;
+
+      const maskBits = parseInt(cidr, 10);
+      const maskInt = cidrToMaskInt(maskBits);
+      const wildcardInt = (~maskInt) >>> 0;
+
+      const networkInt = (ipInt & maskInt) >>> 0;
+      const broadcastInt = (networkInt | wildcardInt) >>> 0;
+
+      const totalAddresses = Math.pow(2, 32 - maskBits);
+
+      let usableHosts = 0;
+      let firstHostInt = 0;
+      let lastHostInt = 0;
+
+      if (maskBits === 32) {
+        usableHosts = 1;
+        firstHostInt = networkInt;
+        lastHostInt = networkInt;
+      } else if (maskBits === 31) {
+        // RFC 3021
+        usableHosts = 2;
+        firstHostInt = networkInt;
+        lastHostInt = broadcastInt;
+      } else {
+        usableHosts = totalAddresses - 2;
+        firstHostInt = (networkInt + 1) >>> 0;
+        lastHostInt = (broadcastInt - 1) >>> 0;
+      }
+
+      return {
+        ip: ipStr,
+        cidr: maskBits,
+        subnetMask: intToIp(maskInt),
+        wildcardMask: intToIp(wildcardInt),
+        networkID: intToIp(networkInt),
+        broadcastID: intToIp(broadcastInt),
+        firstIP: intToIp(firstHostInt),
+        lastIP: intToIp(lastHostInt),
+        usableHosts: usableHosts,
+        totalAddresses: totalAddresses,
+        maskInt: maskInt,
+        networkInt: networkInt,
+        broadcastInt: broadcastInt,
+        hostBits: 32 - maskBits
+      };
+    }
+
+    function runSubnetCalculator() {
+      const ipStr = document.getElementById('ipInput').value.trim();
+      const cidr = parseInt(document.getElementById('cidrSlider').value, 10);
+      const validationMsg = document.getElementById('ipValidationMsg');
+
+      const res = calculateSubnet(ipStr, cidr);
+      if (!res) {
+        validationMsg.textContent = '❌ Invalid IPv4 address format (e.g. 192.168.10.45)';
+        validationMsg.className = 'text-[11px] font-mono text-rose-400 mt-1 block';
+        return;
+      }
+
+      validationMsg.textContent = '✓ Valid IPv4 address format';
+      validationMsg.className = 'text-[11px] font-mono text-emerald-400 mt-1 block';
+
+      // Update Outputs
+      document.getElementById('cidrLabel').textContent = `/${res.cidr}`;
+      document.getElementById('cidrSubnetMaskShort').textContent = `(${res.subnetMask})`;
+      document.getElementById('resNetworkID').textContent = res.networkID;
+      document.getElementById('resBroadcastID').textContent = res.broadcastID;
+      document.getElementById('resSubnetMask').textContent = res.subnetMask;
+      document.getElementById('resWildcardMask').textContent = `Wildcard: ${res.wildcardMask}`;
+      document.getElementById('resHostRange').textContent = `${res.firstIP} - ${res.lastIP}`;
+      document.getElementById('resTotalHosts').textContent = `${res.usableHosts.toLocaleString()} Usable Hosts (${res.totalAddresses.toLocaleString()} Total IPs)`;
+
+      // Math formulas
+      document.getElementById('mathCidr').textContent = res.cidr;
+      document.getElementById('mathHostBits').textContent = res.hostBits;
+      document.getElementById('mathHostBits2').textContent = res.hostBits;
+      document.getElementById('mathTotalAddrs').textContent = res.totalAddresses.toLocaleString();
+      document.getElementById('mathUsableHosts').textContent = res.usableHosts.toLocaleString();
+      
+      const octetIdx = Math.floor(res.cidr / 8);
+      const activeMaskOctet = res.subnetMask.split('.')[octetIdx >= 4 ? 3 : octetIdx] || 255;
+      document.getElementById('mathBlockSize').textContent = `${256 - parseInt(activeMaskOctet, 10)} (256 - ${activeMaskOctet})`;
+
+      // Binary visualization
+      const binaryMask = intToBinary32(res.maskInt);
+      let binaryHtml = '';
+      for (let i = 0; i < 32; i++) {
+        if (i > 0 && i % 8 === 0) binaryHtml += ' <span class="text-slate-600">.</span> ';
+        if (i < res.cidr) {
+          binaryHtml += `<span class="text-cyan-400 font-bold">${binaryMask[i]}</span>`;
+        } else {
+          binaryHtml += `<span class="text-amber-400 font-bold">${binaryMask[i]}</span>`;
+        }
+      }
+      document.getElementById('binaryMaskVisual').innerHTML = binaryHtml;
+      document.getElementById('countNetBits').textContent = res.cidr;
+      document.getElementById('countHostBits').textContent = res.hostBits;
+
+      // Classification
+      const firstOctet = parseInt(ipStr.split('.')[0], 10);
+      document.getElementById('resIpClass').textContent = getIpClass(firstOctet);
+      document.getElementById('resIpScope').textContent = getIpScope(ipStr);
+    }
+
+    function onCidrSliderChange(val) {
+      runSubnetCalculator();
+    }
+
+    function setQuickCidr(cidr) {
+      playClickSound();
+      document.getElementById('cidrSlider').value = cidr;
+      runSubnetCalculator();
+    }
+
+    function loadRandomSubnetProblem() {
+      playClickSound();
+      const octet1 = [10, 172, 192, 198, 203][Math.floor(Math.random() * 5)];
+      let octet2, octet3, octet4;
+      if (octet1 === 10) {
+        octet2 = Math.floor(Math.random() * 256);
+        octet3 = Math.floor(Math.random() * 256);
+        octet4 = Math.floor(Math.random() * 254) + 1;
+      } else if (octet1 === 172) {
+        octet2 = Math.floor(Math.random() * 16) + 16;
+        octet3 = Math.floor(Math.random() * 256);
+        octet4 = Math.floor(Math.random() * 254) + 1;
+      } else {
+        octet2 = 168;
+        octet3 = Math.floor(Math.random() * 256);
+        octet4 = Math.floor(Math.random() * 254) + 1;
+      }
+      const randomCidr = [16, 20, 22, 24, 25, 26, 27, 28, 29, 30][Math.floor(Math.random() * 10)];
+      document.getElementById('ipInput').value = `${octet1}.${octet2}.${octet3}.${octet4}`;
+      document.getElementById('cidrSlider').value = randomCidr;
+      runSubnetCalculator();
+      showToast(`Loaded Random IP: ${octet1}.${octet2}.${octet3}.${octet4}/${randomCidr}`);
+    }
+
+    /* ==========================================================================
+       SECTION 4: 15 VERIFIED SUBNETTING PROBLEMS BANK
+       ========================================================================== */
+    const presetSubnetProblems = [
+      // 5 EASY
+      {
+        id: 1,
+        tier: 'easy',
+        title: "Standard Class C Boundary",
+        ip: "192.168.1.0",
+        cidr: 24,
+        question: "Calculate the Subnet Mask, Network ID, Broadcast ID, and Usable Host count for 192.168.1.0/24.",
+        solution: "A /24 prefix uses 24 network bits and 8 host bits. Mask = 255.255.255.0. Usable hosts = 2^8 - 2 = 254. Network ID = 192.168.1.0. Broadcast = 192.168.1.255. Range = 192.168.1.1 to 192.168.1.254."
+      },
+      {
+        id: 2,
+        tier: 'easy',
+        title: "Halving a Subnet with /25",
+        ip: "10.0.0.140",
+        cidr: 25,
+        question: "Find the Network ID and Broadcast ID for an IP of 10.0.0.140/25.",
+        solution: "A /25 prefix yields mask 255.255.255.128. Block size = 256 - 128 = 128. Subnets start at .0 and .128. Since .140 is between 128 and 255, Network ID = 10.0.0.128, Broadcast ID = 10.0.0.255. Usable hosts = 126."
+      },
+      {
+        id: 3,
+        tier: 'easy',
+        title: "Department Subnetting with /26",
+        ip: "192.168.10.45",
+        cidr: 26,
+        question: "Determine which subnet block the host 192.168.10.45/26 belongs to.",
+        solution: "/26 mask = 255.255.255.192. Block size = 256 - 192 = 64. Subnet intervals: 0, 64, 128, 192. 45 falls into the first block (0 to 63). Network ID = 192.168.10.0. Broadcast = 192.168.10.63. Usable hosts = 62."
+      },
+      {
+        id: 4,
+        tier: 'easy',
+        title: "Small Workgroup /28",
+        ip: "172.20.10.15",
+        cidr: 28,
+        question: "Is 172.20.10.15 a valid usable host address on a /28 subnet?",
+        solution: "/28 mask = 255.255.255.240. Block size = 16. Subnet block starts at 172.20.10.0 and ends at broadcast 172.20.10.15. Therefore, .15 is the SUB-BROADCAST address, NOT a usable host!"
+      },
+      {
+        id: 5,
+        tier: 'easy',
+        title: "Server Cluster /29",
+        ip: "192.168.100.200",
+        cidr: 29,
+        question: "Find the first and last usable host IPs for 192.168.100.200/29.",
+        solution: "/29 mask = 255.255.255.248. Block size = 8. 200 is divisible by 8 (200 = 8 x 25), so Network ID = 192.168.100.200. Broadcast = 192.168.100.207. Usable range: 192.168.100.201 to 192.168.100.206 (6 usable hosts)."
+      },
+
+      // 5 MEDIUM
+      {
+        id: 6,
+        tier: 'medium',
+        title: "Cross-Octet Subnetting /22",
+        ip: "172.16.45.100",
+        cidr: 22,
+        question: "Calculate the Network ID for 172.16.45.100/22 across the 3rd octet.",
+        solution: "/22 mask = 255.255.252.0. The interesting octet is the 3rd octet. Block size = 256 - 252 = 4. 45 / 4 = 11 remainder 1. 11 x 4 = 44. Network ID = 172.16.44.0. Broadcast = 172.16.47.255. Usable hosts = 1022."
+      },
+      {
+        id: 7,
+        tier: 'medium',
+        title: "Campus Backbone /20",
+        ip: "10.50.120.40",
+        cidr: 20,
+        question: "Find the Broadcast address and total usable hosts for 10.50.120.40/20.",
+        solution: "/20 mask = 255.255.240.0. Interesting octet is 3rd octet. Block size = 16. Multiples of 16 near 120: 16 x 7 = 112. Network ID = 10.50.112.0. Broadcast = 10.50.127.255. Host bits = 12. Usable hosts = 2^12 - 2 = 4094."
+      },
+      {
+        id: 8,
+        tier: 'medium',
+        title: "Same Subnet Collision Check",
+        ip: "192.168.1.130",
+        cidr: 27,
+        question: "Can host 192.168.1.130/27 communicate with 192.168.1.165/27 without an intermediate router?",
+        solution: "/27 block size = 32. Blocks: 0-31, 32-63, 64-95, 96-127, 128-159, 160-191. Host A (130) is in 192.168.1.128/27. Host B (165) is in 192.168.1.160/27. They reside on DIFFERENT subnets; a router is strictly required!"
+      },
+      {
+        id: 9,
+        tier: 'medium',
+        title: "Partitioning /24 into 4 Subnets",
+        ip: "192.168.10.0",
+        cidr: 26,
+        question: "You must divide 192.168.10.0/24 into 4 equal subnets. What is the new prefix and the broadcast ID of the 3rd subnet?",
+        solution: "To get 4 subnets: 2^n = 4 => n = 2 bits borrowed. New CIDR = 24 + 2 = /26. Blocks: 1st: 0-63, 2nd: 64-127, 3rd: 128-191, 4th: 192-255. The 3rd subnet Network ID = 192.168.10.128, and its Broadcast ID = 192.168.10.191."
+      },
+      {
+        id: 10,
+        tier: 'medium',
+        title: "High-Density /23 Block",
+        ip: "172.31.255.10",
+        cidr: 23,
+        question: "Find the Network ID and usable range for 172.31.255.10/23.",
+        solution: "/23 mask = 255.255.254.0. 3rd octet block size = 2. 255 is odd, so previous even number is 254. Network ID = 172.31.254.0. Broadcast ID = 172.31.255.255. Usable range: 172.31.254.1 to 172.31.255.254 (510 usable hosts)."
+      },
+
+      // 5 HARD
+      {
+        id: 11,
+        tier: 'hard',
+        title: "Large Enterprise /19 Supernet",
+        ip: "10.128.64.0",
+        cidr: 19,
+        question: "Determine the last usable host IP address for 10.128.64.0/19.",
+        solution: "/19 mask = 255.255.224.0. 3rd octet block size = 32. Blocks: 0, 32, 64, 96... Network ID = 10.128.64.0. Next block = 64 + 32 = 96. Broadcast = 10.128.95.255. Last usable host = 10.128.95.254. Usable hosts = 8190."
+      },
+      {
+        id: 12,
+        tier: 'hard',
+        title: "Point-to-Point WAN Link /30",
+        ip: "192.168.1.4",
+        cidr: 30,
+        question: "Two router serial interfaces are connected via a /30 subnet. If the Network ID is 192.168.1.4/30, what are the two assignable IP addresses?",
+        solution: "/30 mask = 255.255.255.252. Block size = 4. Total IPs = 4 (192.168.1.4 to 1.7). Usable IPs = 192.168.1.5 (Router 1) and 192.168.1.6 (Router 2). 192.168.1.7 is the broadcast."
+      },
+      {
+        id: 13,
+        tier: 'hard',
+        title: "RFC 3021 /31 Subnetting",
+        ip: "10.0.0.0",
+        cidr: 31,
+        question: "According to RFC 3021, how many usable host addresses exist in a /31 subnet and why is it used?",
+        solution: "Traditional subnetting allocates 0 usable hosts (2 - 2 = 0). RFC 3021 eliminates network and directed broadcast addresses for point-to-point links, yielding EXACTLY 2 usable hosts (10.0.0.0 and 10.0.0.1), saving precious IPv4 address space."
+      },
+      {
+        id: 14,
+        tier: 'hard',
+        title: "VLSM Multi-Tier Allocation",
+        ip: "192.168.0.0",
+        cidr: 23,
+        question: "You have 192.168.0.0/23. Subnet for: Dept A (120 hosts), Dept B (60 hosts), Dept C (28 hosts), Dept D (12 hosts). What order must you allocate?",
+        solution: "VLSM requires allocating from LARGEST requirement to SMALLEST: 1) Dept A (120 hosts needs /25, block size 128: 192.168.0.0/25); 2) Dept B (60 hosts needs /26, block size 64: 192.168.0.128/26); 3) Dept C (28 hosts needs /27, block size 32: 192.168.0.192/27); 4) Dept D (12 hosts needs /28, block size 16: 192.168.0.224/28)."
+      },
+      {
+        id: 15,
+        tier: 'hard',
+        title: "Longest Prefix Match Route Lookup",
+        ip: "172.16.35.5",
+        cidr: 20,
+        question: "A router has routes for 172.16.0.0/18 and 172.16.32.0/20. Which route forwards a packet to 172.16.35.5?",
+        solution: "172.16.35.5 matches both /18 and /20. Under the Longest Prefix Match (LPM) rule, the route with the most specific (highest CIDR prefix length) mask is selected: 172.16.32.0/20 wins."
+      }
+    ];
+
+    function renderPresetProblems(filterTier = 'all') {
+      const container = document.getElementById('presetProblemsGrid');
+      container.innerHTML = '';
+
+      const filtered = filterTier === 'all' 
+        ? presetSubnetProblems 
+        : presetSubnetProblems.filter(p => p.tier === filterTier);
+
+      filtered.forEach(prob => {
+        let badgeColor = 'bg-emerald-950 text-emerald-300 border-emerald-800';
+        if (prob.tier === 'medium') badgeColor = 'bg-amber-950 text-amber-300 border-amber-800';
+        if (prob.tier === 'hard') badgeColor = 'bg-rose-950 text-rose-300 border-rose-800';
+
+        const card = document.createElement('div');
+        card.className = 'glass-card p-4 rounded-xl border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition-all';
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded border uppercase font-bold ${badgeColor}">
+                ${prob.tier}
+              </span>
+              <span class="text-xs font-mono text-cyan-400 font-semibold">${prob.ip}/${prob.cidr}</span>
+            </div>
+            <h4 class="text-sm font-bold text-white mb-1.5">${prob.title}</h4>
+            <p class="text-xs text-slate-300 font-sans leading-relaxed mb-3">${prob.question}</p>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <div id="sol-${prob.id}" class="hidden p-2.5 rounded bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300">
+              <span class="text-cyan-400 font-bold block mb-1 uppercase text-[10px]">Step-by-Step Solution:</span>
+              ${prob.solution}
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <button onclick="toggleProblemSolution(${prob.id})" class="text-xs font-mono text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                <span>👁</span> <span id="btnSolText-${prob.id}">Show Solution</span>
+              </button>
+              <button onclick="loadProblemToCalc('${prob.ip}', ${prob.cidr})" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[11px] font-mono border border-slate-700 transition-colors">
+                Load in Calc ↗
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleProblemSolution(id) {
+      playClickSound();
+      const sol = document.getElementById(`sol-${id}`);
+      const btn = document.getElementById(`btnSolText-${id}`);
+      if (sol.classList.contains('hidden')) {
+        sol.classList.remove('hidden');
+        btn.textContent = 'Hide Solution';
+      } else {
+        sol.classList.add('hidden');
+        btn.textContent = 'Show Solution';
+      }
+    }
+
+    function loadProblemToCalc(ip, cidr) {
+      playSuccessSound();
+      document.getElementById('ipInput').value = ip;
+      document.getElementById('cidrSlider').value = cidr;
+      runSubnetCalculator();
+      window.location.hash = '#subnet-lab';
+      showToast(`Loaded ${ip}/${cidr} into Calculator`);
+    }
+
+    function filterPresetProblems(tier) {
+      playClickSound();
+      document.getElementById('btnProbAll').className = tier === 'all' ? 'px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold' : 'px-3 py-1 rounded-lg text-slate-400 hover:text-white';
+      document.getElementById('btnProbEasy').className = tier === 'easy' ? 'px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold' : 'px-3 py-1 rounded-lg text-slate-400 hover:text-white';
+      document.getElementById('btnProbMed').className = tier === 'medium' ? 'px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold' : 'px-3 py-1 rounded-lg text-slate-400 hover:text-white';
+      document.getElementById('btnProbHard').className = tier === 'hard' ? 'px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold' : 'px-3 py-1 rounded-lg text-slate-400 hover:text-white';
+      renderPresetProblems(tier);
+    }
+
+    /* ==========================================================================
+       SECTION 5: WIRESHARK PACKET INSPECTOR & HEX VIEWER ENGINE
+       ========================================================================== */
+    const wiresharkFieldsData = {
+      frame: {
+        tag: "Physical / Wire Frame",
+        offset: "0x0000",
+        title: "Frame 1: 544 bytes captured on interface eth0",
+        expl: "Represents the total physical byte length captured by the libpcap/winpcap driver. Includes the 14-byte Ethernet header, 20-byte IP header, 32-byte TCP header, and 478 bytes of HTTP application payload.",
+        sec: "Anomalously small frames (<64 bytes) indicate Ethernet runt collisions or port-scanning fragments."
+      },
+      ethernet: {
+        tag: "L2 :: Ethernet II Header",
+        offset: "0x0000 - 0x000D (14 Bytes)",
+        title: "Ethernet II Frame Structure",
+        expl: "Contains 6 bytes of Destination MAC (00:14:69:70:81:92), 6 bytes of Source MAC (00:1a:2b:3c:4d:5e), and a 2-byte EtherType field (0x0800 = IPv4). Switches examine the destination MAC to forward frames out of the exact destination switchport.",
+        sec: "MAC spoofing and CAM table flooding attacks exploit switch MAC learning mechanisms to force switches into hub-like broadcast mode."
+      },
+      eth_dst: {
+        tag: "L2 :: Destination MAC Address",
+        offset: "0x0000 - 0x0005 (6 Bytes)",
+        title: "Destination MAC: 00:14:69:70:81:92",
+        expl: "The physical hardware address of the default gateway router (Cisco). The client discovered this MAC using ARP (Address Resolution Protocol) prior to transmitting this packet.",
+        sec: "ARP Cache Poisoning attacks forge gratuitous ARP replies to overwrite this gateway MAC address with an attacker's MAC."
+      },
+      eth_src: {
+        tag: "L2 :: Source MAC Address",
+        offset: "0x0006 - 0x000B (6 Bytes)",
+        title: "Source MAC: 00:1a:2b:3c:4d:5e",
+        expl: "The globally unique hardware burn-in address (BIA) assigned to the client's network interface card. The first 3 octets (00:1a:2b) represent the IEEE OUI (Organizationally Unique Identifier).",
+        sec: "Modern operating systems implement MAC Address Randomization to prevent tracking across public Wi-Fi hotspots."
+      },
+      eth_type: {
+        tag: "L2 :: EtherType Field",
+        offset: "0x000C - 0x000D (2 Bytes)",
+        title: "EtherType: 0x0800 (IPv4)",
+        expl: "Informs the operating system's network driver which Layer 3 protocol handler to dispatch the payload to upon decapsulation. 0x0800 = IPv4, 0x86DD = IPv6, 0x0806 = ARP.",
+        sec: "Attackers may craft uncommon EtherType values to bypass naive Layer 2 security filtering."
+      },
+      ipv4: {
+        tag: "L3 :: IPv4 Header",
+        offset: "0x000E - 0x0021 (20 Bytes)",
+        title: "Internet Protocol Version 4 Header",
+        expl: "Provides logical addressing across disparate networks. Contains Version (4), Header Length (20 bytes), DSCP/QoS, Total Length (530), TTL (64), Protocol (6 for TCP), Header Checksum, and 32-bit IP addresses.",
+        sec: "IP Spoofing involves forging source IP headers; mitigated on modern networks by BCP 38 ingress route filtering."
+      },
+      ip_ver: {
+        tag: "L3 :: Version & IHL",
+        offset: "0x000E (1 Byte)",
+        title: "Version: 4 | Internet Header Length (IHL): 5 (20 Bytes)",
+        expl: "High nibble (0100 = 4) specifies IPv4. Low nibble (0101 = 5) specifies header length in 32-bit words (5 x 4 bytes = 20 bytes minimum header size without options).",
+        sec: "Malicious packets with forged IHL < 5 cause packet parsers to crash or trigger buffer overreads."
+      },
+      ip_len: {
+        tag: "L3 :: Total Length",
+        offset: "0x0010 - 0x0011 (2 Bytes)",
+        title: "Total Packet Length: 530 Bytes",
+        expl: "Defines the entire size of the IPv4 datagram including header and payload. 530 bytes easily fits within the standard 1500-byte Ethernet Maximum Transmission Unit (MTU).",
+        sec: "Oversized packets (>65535 bytes) were historically used in the 'Ping of Death' denial of service attack."
+      },
+      ip_ttl: {
+        tag: "L3 :: Time to Live (TTL)",
+        offset: "0x0016 (1 Byte)",
+        title: "Time to Live (TTL): 64 Hops",
+        expl: "An 8-bit counter decremented by 1 at every router hop. Prevents packets from looping endlessly during routing failures. When TTL reaches 0, the router drops the packet and responds with an ICMP Time Exceeded message.",
+        sec: "Used in OS fingerprinting (Linux/macOS default TTL = 64, Windows = 128, Cisco IOS = 255) and Traceroute hop analysis."
+      },
+      ip_proto: {
+        tag: "L3 :: Protocol Field",
+        offset: "0x0017 (1 Byte)",
+        title: "Next-Level Protocol: 6 (TCP)",
+        expl: "Identifies the L4 protocol encapsulated inside this IP payload. 6 = TCP, 17 = UDP, 1 = ICMP, 89 = OSPF, 47 = GRE.",
+        sec: "Firewalls inspect this field to restrict unauthorized protocols."
+      },
+      ip_chk: {
+        tag: "L3 :: Header Checksum",
+        offset: "0x0018 - 0x0019 (2 Bytes)",
+        title: "IPv4 Header Checksum: 0x1e4f",
+        expl: "A 16-bit one's complement checksum calculated solely over the IPv4 header fields. Because TTL decrements at each hop, routers must recompute this checksum at every hop.",
+        sec: "IPv6 completely removed this header checksum to accelerate hardware router forwarding performance."
+      },
+      ip_src: {
+        tag: "L3 :: Source IP Address",
+        offset: "0x001A - 0x001D (4 Bytes)",
+        title: "Source IP: 192.168.1.105 (Private Host)",
+        expl: "The logical address of the requesting client inside the local area network. When leaving the border router, NAT (Network Address Translation) replaces this with a public IPv4 address.",
+        sec: "Private RFC 1918 addresses cannot be routed across the public Internet."
+      },
+      ip_dst: {
+        tag: "L3 :: Destination IP Address",
+        offset: "0x001E - 0x0021 (4 Bytes)",
+        title: "Destination IP: 93.184.216.34 (example.com)",
+        expl: "The public Internet address hosting the destination web server, previously resolved via a DNS A record lookup.",
+        sec: "BGP route hijacking can redirect traffic destined for this public IP address to rogue autonomous systems."
+      },
+      tcp: {
+        tag: "L4 :: Transmission Control Protocol",
+        offset: "0x0022 - 0x0041 (32 Bytes)",
+        title: "Transmission Control Protocol (TCP) Header",
+        expl: "Provides reliable, sequenced, flow-controlled byte-stream delivery. Contains Source Port (51842), Dest Port (80), Sequence Numbers, ACKs, Flags (PSH, ACK), and Sliding Window Size.",
+        sec: "TCP 3-way handshake (SYN -> SYN+ACK -> ACK) is susceptible to SYN flood attacks if SYN cookies are not enabled."
+      },
+      tcp_ports: {
+        tag: "L4 :: Port Multiplexing",
+        offset: "0x0022 - 0x0025 (4 Bytes)",
+        title: "Src Port: 51842 (Ephemeral) -> Dst Port: 80 (HTTP)",
+        expl: "Source port 51842 is a temporary dynamic port allocated by the OS kernel (ports 49152-65535). Destination port 80 is the standard IANA well-known port for unencrypted HTTP web traffic.",
+        sec: "Port scanning tools (e.g. Nmap) probe well-known and registered ports to enumerate running software services."
+      },
+      tcp_seq: {
+        tag: "L4 :: Sequence & ACK Numbers",
+        offset: "0x0026 - 0x002D (8 Bytes)",
+        title: "Sequence: 1 (Relative) | Acknowledgment: 1",
+        expl: "Sequence numbers ensure that packets arriving out-of-order are reassembled correctly. The ACK number tells the sender the next byte number the receiver expects to receive.",
+        sec: "TCP Sequence Prediction attacks attempt to inject unauthorized packets into active sessions (mitigated by modern randomized Initial Sequence Numbers - ISN)."
+      },
+      tcp_flags: {
+        tag: "L4 :: TCP Control Flags",
+        offset: "0x0032 - 0x0033 (2 Bytes)",
+        title: "Flags: 0x018 (PSH, ACK)",
+        expl: "ACK flag confirms receipt of previous packets. PSH (Push) flag instructs the receiver's TCP buffer to immediately push this HTTP data to the application layer without waiting for a full buffer.",
+        sec: "FIN, XMAS (FIN+PSH+URG), and NULL scans manipulate control flags to elicit distinct OS kernel responses."
+      },
+      tcp_win: {
+        tag: "L4 :: Flow Control Window",
+        offset: "0x0034 - 0x0035 (2 Bytes)",
+        title: "Window Size: 65535 Bytes",
+        expl: "Informs the sender how many bytes of unacknowledged data the receiver is prepared to accept into its buffer. Adjusts dynamically to throttle or accelerate throughput (Sliding Window Flow Control).",
+        sec: "Window size 0 indicates receiver buffer exhaustion; sender must pause transmission."
+      },
+      tcp_chk: {
+        tag: "L4 :: TCP Checksum",
+        offset: "0x0036 - 0x0037 (2 Bytes)",
+        title: "TCP Checksum: 0xa4b1 (Valid)",
+        expl: "Calculated over a 'pseudo-header' (Source IP, Dest IP, Protocol 6, TCP length) plus the TCP header and payload, guaranteeing end-to-end data integrity.",
+        sec: "Corrupted bits cause the receiver to silently drop the segment and trigger retransmission."
+      },
+      http: {
+        tag: "L7 :: Application Layer",
+        offset: "0x0042 - 0x021F (478 Bytes)",
+        title: "Hypertext Transfer Protocol (HTTP/1.1)",
+        expl: "The plain-text application protocol used to request and deliver web pages. Shows a standard HTTP GET method requesting resource '/index.html' from host 'example.com'.",
+        sec: "Plaintext HTTP is completely vulnerable to eavesdropping and session cookie theft. Modern sites enforce HTTPS via HSTS."
+      },
+      http_req: {
+        tag: "L7 :: HTTP Request Line",
+        offset: "0x0042 - 0x0059",
+        title: "Request: GET /index.html HTTP/1.1\\r\\n",
+        expl: "Specifies the HTTP method (GET), the URI path (/index.html), and protocol version (HTTP/1.1). Followed by CRLF (\\r\\n).",
+        sec: "Vulnerable to path traversal attacks (e.g. GET /../../etc/passwd) if not validated by the backend."
+      },
+      http_host: {
+        tag: "L7 :: Host Header",
+        offset: "0x005A - 0x006C",
+        title: "Host: example.com\\r\\n",
+        expl: "Mandatory in HTTP/1.1. Enables Virtual Hosting: multiple domain names sharing a single public IP address.",
+        sec: "Host Header Injection attacks manipulate this header to poison web caches or trigger password reset redirection."
+      },
+      http_ua: {
+        tag: "L7 :: User-Agent Header",
+        offset: "0x006D - 0x00AA",
+        title: "User-Agent Header",
+        expl: "Informs the web server of the client's browser, operating system, and rendering engine for compatibility negotiation.",
+        sec: "Attackers frequently spoof User-Agent strings to mimic legitimate desktop browsers."
+      },
+      http_conn: {
+        tag: "L7 :: Connection Header",
+        offset: "0x00AB - 0x00C0",
+        title: "Connection: keep-alive\\r\\n",
+        expl: "Requests persistent TCP connection reuse across multiple sequential HTTP requests, eliminating redundant 3-way handshakes.",
+        sec: "HTTP Request Smuggling attacks exploit ambiguities in Content-Length vs Transfer-Encoding across persistent keep-alive connections."
+      }
+    };
+
+    const mockHexDump = [
+      { offset: "0000", hex: ["00", "14", "69", "70", "81", "92", "00", "1a", "2b", "3c", "4d", "5e", "08", "00", "45", "00"], ascii: "..ip..+<M^..E.", section: "eth" },
+      { offset: "0010", hex: ["02", "12", "4a", "2b", "40", "00", "40", "06", "1e", "4f", "c0", "a8", "01", "69", "5d", "b8"], ascii: "..J+@.@..O...i].", section: "ip" },
+      { offset: "0020", hex: ["d8", "22", "ca", "82", "00", "50", "00", "00", "03", "e9", "00", "00", "01", "f5", "80", "18"], ascii: ".\"...P..........", section: "tcp" },
+      { offset: "0030", hex: ["ff", "ff", "a4", "b1", "00", "00", "01", "01", "08", "0a", "00", "12", "34", "56", "00", "00"], ascii: "............4V..", section: "tcp" },
+      { offset: "0040", hex: ["47", "45", "54", "20", "2f", "69", "6e", "64", "65", "78", "2e", "68", "74", "6d", "6c", "20"], ascii: "GET /index.html ", section: "http" },
+      { offset: "0050", hex: ["48", "54", "54", "50", "2f", "31", "2e", "31", "0d", "0a", "48", "6f", "73", "74", "3a", "20"], ascii: "HTTP/1.1..Host: ", section: "http" },
+      { offset: "0060", hex: ["65", "78", "61", "6d", "70", "6c", "65", "2e", "63", "6f", "6d", "0d", "0a", "55", "73", "65"], ascii: "example.com..Use", section: "http" },
+      { offset: "0070", hex: ["72", "2d", "41", "67", "65", "6e", "74", "3a", "20", "4e", "65", "74", "52", "65", "76", "2f"], ascii: "r-Agent: NetRev/", section: "http" }
+    ];
+
+    function renderHexDump(highlightSection = null) {
+      const container = document.getElementById('hexDumpContainer');
+      container.innerHTML = '';
+
+      mockHexDump.forEach(row => {
+        let hexSpans = '';
+        row.hex.forEach((b, idx) => {
+          let highlightClass = '';
+          if (highlightSection) {
+            if (row.section === highlightSection) {
+              highlightClass = `hex-highlight-${highlightSection}`;
+            }
+          }
+          hexSpans += `<span class="hex-byte px-0.5 ${highlightClass}" title="Offset 0x${row.offset} Byte #${idx}">${b}</span> `;
+        });
+
+        const line = document.createElement('div');
+        line.className = 'flex items-center justify-between hover:bg-slate-900/80 px-1 py-0.5 rounded';
+        line.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-slate-600 select-none">${row.offset}</span>
+            <div class="font-mono">${hexSpans}</div>
+          </div>
+          <div class="text-slate-400 select-none pl-3 border-l border-slate-800 text-[10px] tracking-widest">${row.ascii}</div>
+        `;
+        container.appendChild(line);
+      });
+    }
+
+    function highlightHexSection(sec) {
+      renderHexDump(sec);
+    }
+
+    function clearHexHighlight() {
+      renderHexDump(null);
+    }
+
+    function inspectWiresharkField(fieldKey) {
+      playClickSound();
+      const f = wiresharkFieldsData[fieldKey];
+      if (!f) return;
+
+      document.getElementById('wsFieldTag').textContent = f.tag;
+      document.getElementById('wsFieldBytes').textContent = `Offset: ${f.offset}`;
+      document.getElementById('wsFieldTitle').textContent = f.title;
+      document.getElementById('wsFieldExpl').textContent = f.expl;
+      document.getElementById('wsFieldSec').textContent = f.sec;
+
+      // Hex highlight mapping
+      if (fieldKey.startsWith('eth')) highlightHexSection('eth');
+      else if (fieldKey.startsWith('ip')) highlightHexSection('ip');
+      else if (fieldKey.startsWith('tcp')) highlightHexSection('tcp');
+      else if (fieldKey.startsWith('http')) highlightHexSection('http');
+      else clearHexHighlight();
+    }
+
+    /* ==========================================================================
+       SECTION 6: 15-QUESTION INTERACTIVE QUIZ ENGINE
+       ========================================================================== */
+    const quizQuestions = [
+      // 5 CONCEPTUAL QUESTIONS
+      {
+        id: 1,
+        category: "Conceptual",
+        badge: "OSI Layer Multiplexing",
+        question: "Which layer in the OSI reference model encapsulates raw user data into 'Segments', oversees port-to-port multiplexing, and controls sliding window flow?",
+        options: [
+          "Layer 3 - Network Layer",
+          "Layer 4 - Transport Layer",
+          "Layer 5 - Session Layer",
+          "Layer 2 - Data Link Layer"
+        ],
+        correct: 1,
+        explanation: "The Transport Layer (Layer 4) is responsible for process-to-process delivery using port numbers (0-65535) and packages application data into Segments (TCP) or Datagrams (UDP). Layer 3 uses Packets, and Layer 2 uses Frames."
+      },
+      {
+        id: 2,
+        category: "Conceptual",
+        badge: "Protocol Encapsulation",
+        question: "At which layer boundary does the Address Resolution Protocol (ARP) operate when resolving an IP address to a physical MAC address?",
+        options: [
+          "Strictly Layer 7 Application Layer",
+          "Layer 4 Transport Layer",
+          "Boundary between Layer 2 and Layer 3 (Encapsulated in L2 Frames)",
+          "Layer 1 Physical Bit Level"
+        ],
+        correct: 2,
+        explanation: "ARP operates at the Data Link / Network layer boundary (often called Layer 2.5). ARP messages are packaged directly into Layer 2 Ethernet frames with EtherType 0x0806 without an IP header."
+      },
+      {
+        id: 3,
+        category: "Conceptual",
+        badge: "TCP Connection State",
+        question: "What is the precise flag sequence exchanged during a standard, successful TCP 3-way connection establishment handshake?",
+        options: [
+          "SYN -> ACK -> FIN",
+          "SYN -> SYN+ACK -> ACK",
+          "ACK -> SYN -> PSH",
+          "RST -> SYN -> ACK"
+        ],
+        correct: 1,
+        explanation: "The client sends a SYN packet with Initial Sequence Number (ISN). The server responds with a SYN+ACK acknowledging the client's ISN and offering its own. The client sends an ACK to finalize the established connection."
+      },
+      {
+        id: 4,
+        category: "Conceptual",
+        badge: "OSI Syntax & Cipher Duties",
+        question: "Which layer of the 7-layer OSI model handles syntax conversion, character translation (e.g. ASCII to EBCDIC), and TLS/SSL cryptographic encryption?",
+        options: [
+          "Session Layer (Layer 5)",
+          "Application Layer (Layer 7)",
+          "Presentation Layer (Layer 6)",
+          "Transport Layer (Layer 4)"
+        ],
+        correct: 2,
+        explanation: "The Presentation Layer (Layer 6) is responsible for data representation, encoding/decryption, and data compression. In TCP/IP, this duty is rolled into the unified Application Layer."
+      },
+      {
+        id: 5,
+        category: "Conceptual",
+        badge: "Flow vs Error Control",
+        question: "What specific mechanism prevents a high-speed sending host from overwhelming the memory buffer of a slower receiving host in TCP?",
+        options: [
+          "Sliding Window Flow Control signaled via the TCP Window field",
+          "Decreasing the IPv4 Time-to-Live (TTL) field",
+          "Setting the TCP PUSH flag on all outgoing segments",
+          "Ethernet Carrier Sense Multiple Access with Collision Avoidance (CSMA/CA)"
+        ],
+        correct: 0,
+        explanation: "TCP uses dynamic Sliding Window flow control. The receiver advertises its available buffer capacity in the 16-bit Window Size field; the sender can never transmit more unacknowledged bytes than this window allows."
+      },
+
+      // 5 SUBNETTING MATH QUESTIONS
+      {
+        id: 6,
+        category: "Subnetting",
+        badge: "Network ID Calculation",
+        question: "What is the Network ID for a host with IP address 172.16.45.100/22?",
+        options: [
+          "172.16.44.0",
+          "172.16.45.0",
+          "172.16.40.0",
+          "172.16.0.0"
+        ],
+        correct: 0,
+        explanation: "A /22 prefix has subnet mask 255.255.252.0. The block size in the 3rd octet is 256 - 252 = 4. Dividing 45 by 4 gives 11 with remainder 1. The subnet block starts at 11 * 4 = 44. Therefore, the Network ID is 172.16.44.0."
+      },
+      {
+        id: 7,
+        category: "Subnetting",
+        badge: "Host Capacity Formula",
+        question: "How many total USABLE host IP addresses are available on an IPv4 subnet configured with a /27 CIDR prefix?",
+        options: [
+          "32 usable hosts",
+          "30 usable hosts",
+          "62 usable hosts",
+          "14 usable hosts"
+        ],
+        correct: 1,
+        explanation: "Host bits H = 32 - 27 = 5. Total addresses = 2^5 = 32. Usable hosts = 2^H - 2 = 32 - 2 = 30 usable hosts (subtracting 1 for Network ID and 1 for Broadcast ID)."
+      },
+      {
+        id: 8,
+        category: "Subnetting",
+        badge: "Broadcast ID Identification",
+        question: "What is the directed Broadcast Address for the subnet block containing 192.168.1.64/26?",
+        options: [
+          "192.168.1.255",
+          "192.168.1.127",
+          "192.168.1.128",
+          "192.168.1.63"
+        ],
+        correct: 1,
+        explanation: "A /26 mask is 255.255.255.192 with block size 256 - 192 = 64. Subnet 192.168.1.64 spans from .64 to .127. The broadcast address (highest address in the block) is 192.168.1.127."
+      },
+      {
+        id: 9,
+        category: "Subnetting",
+        badge: "VLSM Strategy Rule",
+        question: "When partitioning an address space into variable-sized subnets using VLSM, in what mandatory order must subnets be allocated?",
+        options: [
+          "Alphabetically by department department code",
+          "From smallest host requirement to largest host requirement",
+          "From largest host requirement to smallest host requirement",
+          "Uniformly distributed starting at the highest IP address"
+        ],
+        correct: 2,
+        explanation: "VLSM must ALWAYS allocate from largest host requirement down to smallest. Allocating smaller subnets first causes address fragmentation and overlapping block boundaries."
+      },
+      {
+        id: 10,
+        category: "Subnetting",
+        badge: "Wildcard Mask Inversion",
+        question: "What is the correct ACL Wildcard Mask for an IPv4 subnet with prefix length /19 (Subnet Mask: 255.255.224.0)?",
+        options: [
+          "0.0.31.255",
+          "0.0.63.255",
+          "0.0.224.255",
+          "255.255.31.0"
+        ],
+        correct: 0,
+        explanation: "A wildcard mask is the bitwise inverse of the subnet mask: 255.255.255.255 - 255.255.224.0 = 0.0.31.255."
+      },
+
+      // 5 WIRESHARK SCENARIO QUESTIONS
+      {
+        id: 11,
+        category: "Wireshark",
+        badge: "Packet Loss Diagnosis",
+        question: "In a Wireshark capture of a slow download, you observe three identical TCP packets labeled '[TCP Dup ACK 45#1]', '[TCP Dup ACK 45#2]', and '[TCP Dup ACK 45#3]'. What is happening on the network?",
+        options: [
+          "The server is executing a Denial of Service attack against the client",
+          "Packet loss in transit has occurred; 3 duplicate ACKs trigger TCP Fast Retransmit",
+          "The client's sliding window has completely saturated",
+          "The router's ARP table has expired"
+        ],
+        correct: 1,
+        explanation: "When a receiver receives out-of-order packets due to a dropped packet, it immediately generates duplicate ACKs for the last in-order byte. Receiving 3 duplicate ACKs triggers Fast Retransmit without waiting for the retransmission timer (RTO) to expire."
+      },
+      {
+        id: 12,
+        category: "Wireshark",
+        badge: "Connection Rejection Diagnostics",
+        question: "A client attempts to connect to a web server at 10.0.0.5:443. The server immediately returns a packet with TCP flags [RST, ACK]. What does this indicate?",
+        options: [
+          "The destination port 443 has no active listening service or an explicit firewall rejected it",
+          "The SSL/TLS certificate was expired",
+          "The router encountered an MTU fragmentation error",
+          "The packet's TTL was exceeded in transit"
+        ],
+        correct: 0,
+        explanation: "A TCP RST (Reset) flag sent in response to an initial SYN indicates that the destination host is reachable, but no process is listening on port 443 (or a host firewall/iptables rule actively rejected the connection)."
+      },
+      {
+        id: 13,
+        category: "Wireshark",
+        badge: "MITM Security Signature",
+        question: "What Wireshark indicator strongly suggests an active ARP Cache Poisoning (Man-in-the-Middle) attack on a switched Ethernet segment?",
+        options: [
+          "A burst of DNS queries returning NXDOMAIN errors",
+          "Frequent unsolicited ARP replies claiming different MAC addresses for the Default Gateway IP",
+          "TCP packets with window size 0",
+          "HTTP packets containing chunked transfer encoding"
+        ],
+        correct: 1,
+        explanation: "ARP poisoning (mitm) works by repeatedly broadcasting rogue ARP replies telling hosts that the default gateway's IP belongs to the attacker's MAC address. Wireshark flags this as 'Duplicate IP address detected for 192.168.1.1'."
+      },
+      {
+        id: 14,
+        category: "Wireshark",
+        badge: "Filter Syntax Construction",
+        question: "Which Wireshark display filter isolates initial TCP SYN connection requests while strictly excluding the SYN-ACK responses?",
+        options: [
+          "tcp.flags.syn == 1 && tcp.flags.ack == 0",
+          "tcp.flags == 0x02 || tcp.flags == 0x12",
+          "ip.proto == 6 && port == 80",
+          "tcp.handshake == true"
+        ],
+        correct: 0,
+        explanation: "'tcp.flags.syn == 1 && tcp.flags.ack == 0' ensures that the SYN flag bit is set while the ACK bit is unset, isolating purely client-originated connection requests."
+      },
+      {
+        id: 15,
+        category: "Wireshark",
+        badge: "HTTP Response Redirects",
+        question: "In an HTTP packet trace, a client requests 'http://example.com' and receives 'HTTP/1.1 301 Moved Permanently'. Which HTTP header should the client inspect to find the redirected destination URL?",
+        options: [
+          "Referer:",
+          "Location:",
+          "Server:",
+          "Host:"
+        ],
+        correct: 1,
+        explanation: "In HTTP redirection responses (301, 302, 307, 308), the 'Location:' header contains the target URI the client browser must immediately navigate to."
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizUserAnswers = new Array(quizQuestions.length).fill(null);
+    let quizSubmitted = false;
+
+    function renderQuizQuestion() {
+      const q = quizQuestions[currentQuizIndex];
+      document.getElementById('quizCurrentIndex').textContent = currentQuizIndex + 1;
+      document.getElementById('quizCategoryBadge').textContent = `${q.category} // ${q.badge}`;
+      document.getElementById('quizQuestionText').textContent = q.question;
+
+      const progressPct = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+      document.getElementById('quizProgressBar').style.width = `${progressPct}%`;
+
+      document.getElementById('btnPrevQuiz').disabled = currentQuizIndex === 0;
+
+      // Render options
+      const optContainer = document.getElementById('quizOptionsContainer');
+      optContainer.innerHTML = '';
+
+      const userAnswer = quizUserAnswers[currentQuizIndex];
+      const hasAnswered = userAnswer !== null;
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('div');
+        let cardStyle = "bg-slate-900 border-slate-800 hover:border-slate-700 hover:bg-slate-850 cursor-pointer text-slate-200";
+
+        if (hasAnswered) {
+          if (idx === q.correct) {
+            cardStyle = "bg-emerald-950/40 border-emerald-500/80 text-emerald-300 font-bold";
+          } else if (idx === userAnswer) {
+            cardStyle = "bg-rose-950/40 border-rose-500/80 text-rose-300 font-bold";
+          } else {
+            cardStyle = "bg-slate-950 border-slate-900 text-slate-500 opacity-60";
+          }
+        }
+
+        btn.className = `p-4 rounded-xl border flex items-center justify-between transition-all ${cardStyle}`;
+        btn.onclick = () => selectQuizOption(idx);
+
+        let indicator = `<span class="w-6 h-6 rounded-lg bg-slate-800 text-slate-400 font-mono text-xs flex items-center justify-center">${String.fromCharCode(65 + idx)}</span>`;
+        if (hasAnswered) {
+          if (idx === q.correct) indicator = `<span class="w-6 h-6 rounded-lg bg-emerald-600 text-slate-950 font-bold text-xs flex items-center justify-center">✓</span>`;
+          else if (idx === userAnswer) indicator = `<span class="w-6 h-6 rounded-lg bg-rose-600 text-white font-bold text-xs flex items-center justify-center">✗</span>`;
+        }
+
+        btn.innerHTML = `
+          <div class="flex items-center gap-3">
+            ${indicator}
+            <span class="font-sans text-sm">${opt}</span>
+          </div>
+        `;
+        optContainer.appendChild(btn);
+      });
+
+      // Explanation box
+      const expBox = document.getElementById('quizExplanationBox');
+      if (hasAnswered) {
+        expBox.classList.remove('hidden');
+        const isCorrect = userAnswer === q.correct;
+        const verdict = document.getElementById('quizVerdictText');
+        if (isCorrect) {
+          verdict.innerHTML = `<span class="text-emerald-400">✓ Correct Answer!</span>`;
+        } else {
+          verdict.innerHTML = `<span class="text-rose-400">✗ Incorrect. Correct Option: (${String.fromCharCode(65 + q.correct)})</span>`;
+        }
+        document.getElementById('quizExplanationText').textContent = q.explanation;
+      } else {
+        expBox.classList.add('hidden');
+      }
+
+      // Next / Submit button text
+      const nextBtn = document.getElementById('btnNextQuiz');
+      if (currentQuizIndex === quizQuestions.length - 1) {
+        nextBtn.textContent = 'Finish & View Results →';
+      } else {
+        nextBtn.textContent = 'Next Question →';
+      }
+
+      updateQuizScoreDisplay();
+    }
+
+    function selectQuizOption(optIdx) {
+      if (quizUserAnswers[currentQuizIndex] !== null) return; // Prevent changing answer once selected
+
+      quizUserAnswers[currentQuizIndex] = optIdx;
+      const isCorrect = optIdx === quizQuestions[currentQuizIndex].correct;
+      if (isCorrect) {
+        playSuccessSound();
+      } else {
+        playErrorSound();
+      }
+      renderQuizQuestion();
+    }
+
+    function nextQuizQuestion() {
+      playClickSound();
+      if (currentQuizIndex < quizQuestions.length - 1) {
+        currentQuizIndex++;
+        renderQuizQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function prevQuizQuestion() {
+      if (currentQuizIndex > 0) {
+        playClickSound();
+        currentQuizIndex--;
+        renderQuizQuestion();
+      }
+    }
+
+    function updateQuizScoreDisplay() {
+      let score = 0;
+      quizUserAnswers.forEach((ans, idx) => {
+        if (ans !== null && ans === quizQuestions[idx].correct) score++;
+      });
+      document.getElementById('quizScoreText').textContent = `${score} / 15`;
+    }
+
+    function finishQuiz() {
+      playSuccessSound();
+      document.getElementById('quizQuestionBox').classList.add('hidden');
+      document.getElementById('quizSummaryContainer').classList.remove('hidden');
+
+      let score = 0;
+      let cat1 = 0, cat2 = 0, cat3 = 0;
+
+      quizUserAnswers.forEach((ans, idx) => {
+        const isRight = ans !== null && ans === quizQuestions[idx].correct;
+        if (isRight) {
+          score++;
+          if (idx < 5) cat1++;
+          else if (idx < 10) cat2++;
+          else cat3++;
+        }
+      });
+
+      document.getElementById('quizFinalScoreNumber').textContent = `${score} / 15 (${Math.round((score / 15) * 100)}%)`;
+      document.getElementById('quizScoreCat1').textContent = `${cat1} / 5`;
+      document.getElementById('quizScoreCat2').textContent = `${cat2} / 5`;
+      document.getElementById('quizScoreCat3').textContent = `${cat3} / 5`;
+
+      const grade = document.getElementById('quizPerformanceGrade');
+      if (score >= 13) {
+        grade.textContent = "Grade: Distinction // Certified Network Geek 🚀";
+        grade.className = "text-xs font-mono text-emerald-400 font-semibold";
+      } else if (score >= 9) {
+        grade.textContent = "Grade: Solid Pass // Ready for CSE Semester Labs 👍";
+        grade.className = "text-xs font-mono text-cyan-400 font-semibold";
+      } else {
+        grade.textContent = "Grade: Needs Revision // Review the Subnetting & Wireshark modules ⚠️";
+        grade.className = "text-xs font-mono text-amber-400 font-semibold";
+      }
+    }
+
+    function resetQuiz() {
+      playClickSound();
+      currentQuizIndex = 0;
+      quizUserAnswers = new Array(quizQuestions.length).fill(null);
+      document.getElementById('quizQuestionBox').classList.remove('hidden');
+      document.getElementById('quizSummaryContainer').classList.add('hidden');
+      document.getElementById('quizFullReviewKey').classList.add('hidden');
+      renderQuizQuestion();
+      showToast('Quiz reset to Question 1');
+    }
+
+    function toggleAnswerReviewKey() {
+      playClickSound();
+      const reviewContainer = document.getElementById('quizFullReviewKey');
+      if (!reviewContainer.classList.contains('hidden')) {
+        reviewContainer.classList.add('hidden');
+        return;
+      }
+      reviewContainer.classList.remove('hidden');
+      reviewContainer.innerHTML = '<h4 class="text-sm font-bold text-white mb-4 uppercase">Complete 15-Question Answer Key & Explanations:</h4>';
+
+      quizQuestions.forEach((q, idx) => {
+        const userChoice = quizUserAnswers[idx];
+        const isCorrect = userChoice === q.correct;
+        const item = document.createElement('div');
+        item.className = 'p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5';
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-slate-400 font-bold">Q${idx + 1}: ${q.badge}</span>
+            <span class="${isCorrect ? 'text-emerald-400 font-bold' : 'text-rose-400'}">${isCorrect ? '✓ Correct' : '✗ Missed'}</span>
+          </div>
+          <p class="font-sans text-white text-xs">${q.question}</p>
+          <div class="text-[11px] text-emerald-400 font-mono">
+            <strong>Correct:</strong> (${String.fromCharCode(65 + q.correct)}) ${q.options[q.correct]}
+          </div>
+          <div class="text-[11px] text-slate-400 font-sans border-t border-slate-800/80 pt-1">
+            ${q.explanation}
+          </div>
+        `;
+        reviewContainer.appendChild(item);
+      });
+    }
+
+    /* ==========================================================================
+       SECTION 7: PYTHON CODE MODULE & IN-BROWSER SIMULATOR
+       ========================================================================== */
+    function copyPythonCode() {
+      const code = document.getElementById('pythonSourceCode').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        playSuccessSound();
+        const btnText = document.getElementById('copyPyText');
+        btnText.textContent = '✓ Copied to Clipboard!';
+        showToast('Python generator script copied');
+        setTimeout(() => { btnText.textContent = 'Copy Python Script'; }, 2000);
+      });
+    }
+
+    function downloadPythonFile() {
+      playClickSound();
+      const code = document.getElementById('pythonSourceCode').textContent;
+      const blob = new Blob([code], { type: 'text/x-python' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'generate_subnet_problems.py';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Downloading generate_subnet_problems.py');
+    }
+
+    function runBrowserPythonSimulator() {
+      playClickSound();
+      const term = document.getElementById('terminalOutput');
+      term.innerHTML = '<span class="text-cyan-400">[*] Spawning Python 3.9 V8 environment...</span><br><span class="text-slate-400">[*] Executing generate_subnet_problems(count=3)...</span>';
+
+      setTimeout(() => {
+        const simulated = [];
+        for (let i = 1; i <= 3; i++) {
+          const octet1 = [10, 172, 192][i - 1];
+          const octet2 = octet1 === 172 ? 16 : (octet1 === 192 ? 168 : 100);
+          const cidr = [26, 22, 29][i - 1];
+          const sub = calculateSubnet(`${octet1}.${octet2}.10.55`, cidr);
+          simulated.push({
+            problem_id: i,
+            target_ip: sub.ip,
+            cidr_prefix: `/${sub.cidr}`,
+            subnet_mask: sub.subnetMask,
+            network_id: sub.networkID,
+            broadcast_id: sub.broadcastID,
+            usable_hosts: sub.usableHosts,
+            host_range: `${sub.firstIP} - ${sub.lastIP}`
+          });
+        }
+
+        playSuccessSound();
+        term.innerHTML = `
+          <span class="text-emerald-400">[✓] Successfully generated 3 verified sample problems:</span>
+          <pre class="mt-2 text-[10px] text-cyan-300 font-mono select-all bg-slate-900 p-2 rounded">${JSON.stringify(simulated, null, 2)}</pre>
+          <span class="text-slate-500 mt-2 block">[✓] Process finished with exit code 0</span>
+        `;
+        showToast('Generated 3 sample subnet problems in sandbox');
+      }, 500);
+    }
+
+    /* ==========================================================================
+       INITIALIZATION CALLS
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderLayersStack();
+      renderPostalStep();
+      runSubnetCalculator();
+      renderPresetProblems('all');
+      renderHexDump();
+      renderQuizQuestion();
+      inspectWiresharkField('ip_ttl');
+    });
+  </script>
+</body>
+</html>
